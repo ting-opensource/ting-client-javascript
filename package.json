@@ -1,0 +1,11 @@
+{
+  "name": "ting-client-javascript",
+  "version": "0.1.0",
+  "description": "Durable and Realtime Messaging System primarily geared towards Web Apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tanmay Patel (me@tanmaypatel.com)",
+  "license": "UNLICENCED"
+}
