@@ -1,0 +1,15 @@
+{
+  "name": "ting-client-javascript",
+  "dependencies": {
+    "lodash": "registry:npm/lodash#4.0.0+20160723033700"
+  },
+  "globalDependencies": {
+    "core-js": "registry:dt/core-js#0.0.0+20160725163759",
+    "eventemitter3": "registry:dt/eventemitter3#1.1.1+20151208234524",
+    "moment": "registry:dt/moment#2.11.1+20160829143156",
+    "node": "registry:dt/node#6.0.0+20160909174046",
+    "socket.io-client": "registry:dt/socket.io-client#1.4.4+20160317120654",
+    "whatwg-fetch": "registry:dt/whatwg-fetch#0.0.0+20160829180742",
+    "whatwg-streams": "registry:dt/whatwg-streams#0.0.0+20160829180742"
+  }
+}

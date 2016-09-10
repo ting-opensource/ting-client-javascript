@@ -1,0 +1,1 @@
+{"version":3,"file":"Topic.js","sourceRoot":"","sources":["../../src/models/Topic.ts"],"names":[],"mappings":";;;;;;;YAIA;gBAWI;oBATA,YAAO,GAAU,EAAE,CAAC;oBACpB,SAAI,GAAU,EAAE,CAAC;oBACjB,aAAQ,GAAW,KAAK,CAAC;oBACzB,cAAS,GAAU,EAAE,CAAC;oBACtB,cAAS,GAAuB,IAAI,CAAC;oBACrC,cAAS,GAAU,EAAE,CAAC;oBACtB,cAAS,GAAuB,IAAI,CAAC;gBAKrC,CAAC;gBACL,YAAC;YAAD,CAAC,AAdD,IAcC;YAdD,yBAcC,CAAA"}
