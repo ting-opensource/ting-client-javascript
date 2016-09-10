@@ -3,8 +3,13 @@ import 'whatwg-fetch';
 import _ from 'lodash';
 import EventEmitter from 'eventemitter3';
 import io from 'socket.io-client';
+import {Observable} from 'rxjs';
 
+import {Message} from './models/Message';
+import {MessagesStore} from './stores/MessagesStore';
 import {onConnect, onError, onReconnectAttempt, onReconnect, onReconnectError, onReconnectFailed, onMessage, onDisconnect} from './ConnectionListeners';
+
+let messagesStore:MessagesStore = MessagesStore.getInstance();
 
 let _instance:TingClient = null;
 
@@ -80,5 +85,10 @@ export class TingClient extends EventEmitter
 
             return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
+    }
+
+    getMessageStreamForTopicName(topicName:string):Observable<Message>
+    {
+        return messagesStore.getMessageStreamForTopicName(topicName);
     }
 }

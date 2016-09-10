@@ -33,11 +33,6 @@ export class Topic
         {
             this[key] = data[key];
         }
-
-        this.messages.subscribe((message) =>
-        {
-            console.log(message);
-        });
     }
 
     addMessage(message:Message)

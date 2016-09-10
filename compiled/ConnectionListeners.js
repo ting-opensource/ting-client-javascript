@@ -1,8 +1,8 @@
-System.register(['./adapters/TopicAdapter', './adapters/MessageAdapter', './stores/SubscriptionsStore'], function(exports_1, context_1) {
+System.register(['./adapters/TopicAdapter', './adapters/MessageAdapter', './stores/SubscriptionsStore', './stores/MessagesStore'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var TopicAdapter_1, MessageAdapter_1, SubscriptionsStore_1;
-    var subscriptionsStore;
+    var TopicAdapter_1, MessageAdapter_1, SubscriptionsStore_1, MessagesStore_1;
+    var subscriptionsStore, messagesStore;
     function onConnect(socket) {
         socket.on('error', onError);
         socket.on('disconnect', onDisconnect);
@@ -47,6 +47,7 @@ System.register(['./adapters/TopicAdapter', './adapters/MessageAdapter', './stor
                 topic.addMessage(message);
                 subscriptionsStore.addSubscribedTopic(topic);
             }
+            messagesStore.addMessage(message);
         });
     }
     exports_1("onMessage", onMessage);
@@ -63,9 +64,13 @@ System.register(['./adapters/TopicAdapter', './adapters/MessageAdapter', './stor
             },
             function (SubscriptionsStore_1_1) {
                 SubscriptionsStore_1 = SubscriptionsStore_1_1;
+            },
+            function (MessagesStore_1_1) {
+                MessagesStore_1 = MessagesStore_1_1;
             }],
         execute: function() {
             subscriptionsStore = SubscriptionsStore_1.SubscriptionsStore.getInstance();
+            messagesStore = MessagesStore_1.MessagesStore.getInstance();
         }
     }
 });

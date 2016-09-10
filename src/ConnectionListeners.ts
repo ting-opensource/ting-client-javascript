@@ -5,8 +5,10 @@ import {IIncomingMessage, Message} from './models/Message';
 import {TopicAdapter} from './adapters/TopicAdapter';
 import {MessageAdapter} from './adapters/MessageAdapter';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
+import {MessagesStore} from './stores/MessagesStore';
 
-let subscriptionsStore:SubscriptionsStore = SubscriptionsStore.getInstance(); 
+let subscriptionsStore:SubscriptionsStore = SubscriptionsStore.getInstance();
+let messagesStore:MessagesStore = MessagesStore.getInstance();
 
 export function onConnect(socket:SocketIOClient.Socket)
 {
@@ -73,6 +75,8 @@ export function onMessage(data:IIncomingMessage)
             topic.addMessage(message);
             subscriptionsStore.addSubscribedTopic(topic);
         }
+
+        messagesStore.addMessage(message);
     });
 }
 

@@ -21,7 +21,7 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
             SubscriptionsStore = (function () {
                 function SubscriptionsStore(enforcer) {
                     this._subscribedTopics = new Array();
-                    this._subscribedTopicsObservable = new rxjs_1.BehaviorSubject();
+                    this._subscribedTopicsObservable = new rxjs_1.BehaviorSubject(this.subscribedTopics);
                     if (!enforcer || !(enforcer instanceof SingletonEnforcer)) {
                         throw new Error("This is a Singleton Class. Use getInstance() method instead.");
                     }

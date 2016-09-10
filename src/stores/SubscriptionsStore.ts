@@ -14,8 +14,8 @@ export class SubscriptionsStore
         return this._subscribedTopics;
     }
 
-    private _subscribedTopicsObservable:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>();
-    get subscribedTopicsObservable():Array<Topic>
+    private _subscribedTopicsObservable:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>(this.subscribedTopics);
+    get subscribedTopicsObservable():BehaviorSubject<Array<Topic>>
     {
         return this._subscribedTopicsObservable;
     }

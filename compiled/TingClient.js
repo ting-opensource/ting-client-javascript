@@ -1,4 +1,4 @@
-System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './ConnectionListeners'], function(exports_1, context_1) {
+System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/MessagesStore', './ConnectionListeners'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
@@ -6,8 +6,8 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './Connect
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var eventemitter3_1, socket_io_client_1, ConnectionListeners_1;
-    var _instance, SingletonEnforcer, TingClient;
+    var eventemitter3_1, socket_io_client_1, MessagesStore_1, ConnectionListeners_1;
+    var messagesStore, _instance, SingletonEnforcer, TingClient;
     return {
         setters:[
             function (_1) {},
@@ -17,10 +17,14 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './Connect
             function (socket_io_client_1_1) {
                 socket_io_client_1 = socket_io_client_1_1;
             },
+            function (MessagesStore_1_1) {
+                MessagesStore_1 = MessagesStore_1_1;
+            },
             function (ConnectionListeners_1_1) {
                 ConnectionListeners_1 = ConnectionListeners_1_1;
             }],
         execute: function() {
+            messagesStore = MessagesStore_1.MessagesStore.getInstance();
             _instance = null;
             SingletonEnforcer = (function () {
                 function SingletonEnforcer() {
@@ -78,6 +82,9 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './Connect
                         });
                         return liveConnectionPromise;
                     });
+                };
+                TingClient.prototype.getMessageStreamForTopicName = function (topicName) {
+                    return messagesStore.getMessageStreamForTopicName(topicName);
                 };
                 return TingClient;
             }(eventemitter3_1.default));

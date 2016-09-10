@@ -23,9 +23,6 @@ System.register(['rxjs'], function(exports_1, context_1) {
                     for (var key in data) {
                         this[key] = data[key];
                     }
-                    this.messages.subscribe(function (message) {
-                        console.log(message);
-                    });
                 }
                 Topic.prototype.addMessage = function (message) {
                     this.messages.next(message);
