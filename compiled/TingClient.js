@@ -1,4 +1,4 @@
-System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(exports_1, context_1) {
+System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './ConnectionListeners'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
@@ -6,7 +6,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var eventemitter3_1, socket_io_client_1;
+    var eventemitter3_1, socket_io_client_1, ConnectionListeners_1;
     var _instance, SingletonEnforcer, TingClient;
     return {
         setters:[
@@ -16,6 +16,9 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
             },
             function (socket_io_client_1_1) {
                 socket_io_client_1 = socket_io_client_1_1;
+            },
+            function (ConnectionListeners_1_1) {
+                ConnectionListeners_1 = ConnectionListeners_1_1;
             }],
         execute: function() {
             _instance = null;
@@ -66,15 +69,8 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
                                 query: "token=" + token
                             });
                             _this._transport.on('connect', function () {
-                                _this._transport.on('disconnect', function () {
-                                });
-                                _this._transport.on('error', function (error) {
-                                });
-                                _this._transport.on('message', function (data) {
-                                    console.info('message');
-                                    console.log(data);
-                                });
-                                resolve(_this._transport.id);
+                                ConnectionListeners_1.onConnect(_this._transport);
+                                resolve(_this._transport);
                             });
                             _this._transport.once('error', function (error) {
                                 reject(error);

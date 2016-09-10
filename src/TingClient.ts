@@ -4,6 +4,8 @@ import _ from 'lodash';
 import EventEmitter from 'eventemitter3';
 import io from 'socket.io-client';
 
+import {onConnect, onError, onReconnectAttempt, onReconnect, onReconnectError, onReconnectFailed, onMessage, onDisconnect} from './ConnectionListeners';
+
 let _instance:TingClient = null;
 
 class SingletonEnforcer {}
@@ -51,7 +53,7 @@ export class TingClient extends EventEmitter
         });
     }
 
-    connect():Promise<string>
+    connect():Promise<SocketIOClient.Socket>
     {
         return this._authorize(this._userId)
         .then((token:string) =>
@@ -65,21 +67,9 @@ export class TingClient extends EventEmitter
 
                 this._transport.on('connect', () =>
                 {
-                    this._transport.on('disconnect', () =>
-                    {
-                    });
+                    onConnect(this._transport);
 
-                    this._transport.on('error', (error) =>
-                    {
-                    });
-
-                    this._transport.on('message', function(data)
-                    {
-                        console.info('message');
-                        console.log(data);
-                    });
-
-                    resolve(this._transport.id);
+                    resolve(this._transport);
                 });
 
                 this._transport.once('error', (error) =>
@@ -88,7 +78,7 @@ export class TingClient extends EventEmitter
                 });
             });
 
-            return <Promise<string>> liveConnectionPromise;
+            return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
     }
 }
