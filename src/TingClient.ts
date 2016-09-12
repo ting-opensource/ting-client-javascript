@@ -31,8 +31,8 @@ export class TingClient extends EventEmitter
         this._serviceBaseURL = serviceBaseURL;
         this._userId = userId;
 
-        this._subscriptionsStore = new SubscriptionsStore(this);
-        this._messagesStore = new MessagesStore(this);
+        this._subscriptionsStore = new SubscriptionsStore();
+        this._messagesStore = new MessagesStore();
     }
 
     private _authorize(userId:string):Promise<string>

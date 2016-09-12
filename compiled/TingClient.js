@@ -41,8 +41,8 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
                     this._userId = '';
                     this._serviceBaseURL = serviceBaseURL;
                     this._userId = userId;
-                    this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore(this);
-                    this._messagesStore = new MessagesStore_1.MessagesStore(this);
+                    this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore();
+                    this._messagesStore = new MessagesStore_1.MessagesStore();
                 }
                 TingClient.prototype._authorize = function (userId) {
                     return fetch(this._serviceBaseURL + '/authorize', {
