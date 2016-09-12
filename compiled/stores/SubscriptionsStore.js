@@ -20,8 +20,7 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
             }());
             SubscriptionsStore = (function () {
                 function SubscriptionsStore(enforcer) {
-                    this._subscribedTopics = new Array();
-                    this._subscribedTopicsObservable = new rxjs_1.BehaviorSubject(this.subscribedTopics);
+                    this._subscribedTopics = new rxjs_1.BehaviorSubject([]);
                     if (!enforcer || !(enforcer instanceof SingletonEnforcer)) {
                         throw new Error("This is a Singleton Class. Use getInstance() method instead.");
                     }
@@ -33,13 +32,6 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     enumerable: true,
                     configurable: true
                 });
-                Object.defineProperty(SubscriptionsStore.prototype, "subscribedTopicsObservable", {
-                    get: function () {
-                        return this._subscribedTopicsObservable;
-                    },
-                    enumerable: true,
-                    configurable: true
-                });
                 SubscriptionsStore.getInstance = function () {
                     if (!_instance) {
                         _instance = new SubscriptionsStore(new SingletonEnforcer());
@@ -47,16 +39,27 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     return _instance;
                 };
                 SubscriptionsStore.prototype.addSubscribedTopic = function (topic) {
-                    this.subscribedTopics.push(topic);
-                    this.subscribedTopicsObservable.next(this.subscribedTopics);
+                    var subscribedTopicsArray = this.subscribedTopics.getValue();
+                    subscribedTopicsArray.push(topic);
+                    this.subscribedTopics.next(subscribedTopicsArray);
+                };
+                SubscriptionsStore.prototype.removeSubscribedTopicById = function (topicId) {
+                    var subscribedTopicsArray = this.subscribedTopics.getValue();
+                    var matchedTopic = lodash_1.default.find(subscribedTopicsArray, function (datum) {
+                        return datum.topicId === topicId;
+                    });
+                    var matchedTopicIndex = lodash_1.default.indexOf(subscribedTopicsArray, matchedTopic);
+                    if (matchedTopicIndex >= 0) {
+                        subscribedTopicsArray.splice(matchedTopicIndex, 1);
+                    }
+                    this.subscribedTopics.next(subscribedTopicsArray);
                 };
                 SubscriptionsStore.prototype.getTopicForName = function (topicName) {
-                    var _this = this;
-                    return new Promise(function (resolve, reject) {
-                        resolve(lodash_1.default.find(_this.subscribedTopics, function (datum) {
-                            return datum.name === topicName;
-                        }));
+                    var subscribedTopicsArray = this.subscribedTopics.getValue();
+                    var matchedTopic = lodash_1.default.find(subscribedTopicsArray, function (datum) {
+                        return datum.name === topicName;
                     });
+                    return matchedTopic || null;
                 };
                 return SubscriptionsStore;
             }());

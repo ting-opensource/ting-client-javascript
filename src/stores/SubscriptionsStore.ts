@@ -8,16 +8,10 @@ class SingletonEnforcer {}
 
 export class SubscriptionsStore
 {
-    private _subscribedTopics:Array<Topic> = new Array<Topic>();
-    get subscribedTopics():Array<Topic>
+    private _subscribedTopics:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>([]);
+    get subscribedTopics():BehaviorSubject<Array<Topic>>
     {
         return this._subscribedTopics;
-    }
-
-    private _subscribedTopicsObservable:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>(this.subscribedTopics);
-    get subscribedTopicsObservable():BehaviorSubject<Array<Topic>>
-    {
-        return this._subscribedTopicsObservable;
     }
 
     constructor(enforcer:SingletonEnforcer)
@@ -40,18 +34,34 @@ export class SubscriptionsStore
 
     addSubscribedTopic(topic:Topic)
     {
-        this.subscribedTopics.push(topic);
-        this.subscribedTopicsObservable.next(this.subscribedTopics);
+        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
+        subscribedTopicsArray.push(topic);
+        this.subscribedTopics.next(subscribedTopicsArray);
     }
 
-    getTopicForName(topicName:string):Promise<Topic>
+    removeSubscribedTopicById(topicId:string)
     {
-        return new Promise((resolve, reject) =>
+        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
         {
-            resolve(_.find(this.subscribedTopics, (datum:Topic) =>
-            {
-                return datum.name === topicName;
-            }));
+            return datum.topicId === topicId;
         });
+        let matchedTopicIndex = _.indexOf(subscribedTopicsArray, matchedTopic);
+        if(matchedTopicIndex >= 0)
+        {
+            subscribedTopicsArray.splice(matchedTopicIndex, 1);
+        }
+        this.subscribedTopics.next(subscribedTopicsArray);
+    }
+
+    getTopicForName(topicName:string):Topic
+    {
+        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
+        {
+            return datum.name === topicName;
+        });
+
+        return matchedTopic || null;
     }
 }

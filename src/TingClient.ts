@@ -7,9 +7,11 @@ import {Observable} from 'rxjs';
 
 import {Message} from './models/Message';
 import {MessagesStore} from './stores/MessagesStore';
+import {SubscriptionsStore} from './stores/SubscriptionsStore';
 import {onConnect, onError, onReconnectAttempt, onReconnect, onReconnectError, onReconnectFailed, onMessage, onDisconnect} from './ConnectionListeners';
 
 let messagesStore:MessagesStore = MessagesStore.getInstance();
+let subscriptionsStore:SubscriptionsStore = SubscriptionsStore.getInstance();
 
 let _instance:TingClient = null;
 
@@ -85,6 +87,11 @@ export class TingClient extends EventEmitter
 
             return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
+    }
+
+    getSubscribedTopics():Observable<Array<Topic>>
+    {
+        return subscriptionsStore.subscribedTopics;
     }
 
     getMessageStreamForTopicName(topicName:string):Observable<Message>

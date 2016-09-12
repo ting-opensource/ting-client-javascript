@@ -8,6 +8,11 @@ System.import('compiled:TingClient')
     {
         console.info('Connect wih Socket: ', socket);
 
+        client.getSubscribedTopics().subscribe((topics) =>
+        {
+            console.debug(topics);
+        });
+
         client.getMessageStreamForTopicName('test-topic').subscribe((message) =>
         {
             console.info(message);
