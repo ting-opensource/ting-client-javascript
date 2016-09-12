@@ -2,7 +2,7 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var lodash_1, rxjs_1;
-    var _instance, SingletonEnforcer, SubscriptionsStore;
+    var SubscriptionsStore;
     return {
         setters:[
             function (lodash_1_1) {
@@ -12,18 +12,9 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                 rxjs_1 = rxjs_1_1;
             }],
         execute: function() {
-            _instance = null;
-            SingletonEnforcer = (function () {
-                function SingletonEnforcer() {
-                }
-                return SingletonEnforcer;
-            }());
             SubscriptionsStore = (function () {
-                function SubscriptionsStore(enforcer) {
+                function SubscriptionsStore() {
                     this._subscribedTopics = new rxjs_1.BehaviorSubject([]);
-                    if (!enforcer || !(enforcer instanceof SingletonEnforcer)) {
-                        throw new Error("This is a Singleton Class. Use getInstance() method instead.");
-                    }
                 }
                 Object.defineProperty(SubscriptionsStore.prototype, "subscribedTopics", {
                     get: function () {
@@ -32,12 +23,6 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     enumerable: true,
                     configurable: true
                 });
-                SubscriptionsStore.getInstance = function () {
-                    if (!_instance) {
-                        _instance = new SubscriptionsStore(new SingletonEnforcer());
-                    }
-                    return _instance;
-                };
                 SubscriptionsStore.prototype.addSubscribedTopic = function (topic) {
                     var subscribedTopicsArray = this.subscribedTopics.getValue();
                     subscribedTopicsArray.push(topic);

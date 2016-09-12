@@ -1,9 +1,49 @@
-System.register(['./adapters/TopicAdapter', './adapters/SubscriptionAdapter', './adapters/MessageAdapter', './stores/SubscriptionsStore', './stores/MessagesStore'], function(exports_1, context_1) {
+System.register(['./adapters/TopicAdapter', './adapters/SubscriptionAdapter', './adapters/MessageAdapter'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var TopicAdapter_1, SubscriptionAdapter_1, MessageAdapter_1, SubscriptionsStore_1, MessagesStore_1;
-    var subscriptionsStore, messagesStore;
-    function onConnect(socket) {
+    var TopicAdapter_1, SubscriptionAdapter_1, MessageAdapter_1;
+    function onConnect(socket, subscriptionsStore, messagesStore) {
+        function onError() {
+        }
+        function onReconnectAttempt() {
+        }
+        function onReconnecting() {
+        }
+        function onReconnect() {
+        }
+        function onReconnectError() {
+        }
+        function onReconnectFailed() {
+        }
+        function onSubscriptionSuccess(subscriptionData) {
+            var subscription = SubscriptionAdapter_1.SubscriptionAdapter.fromServerResponse(subscriptionData);
+            var matchedTopic = subscriptionsStore.getTopicForName(subscription.topic.name);
+            if (!matchedTopic) {
+                subscriptionsStore.addSubscribedTopic(subscription.topic);
+            }
+        }
+        function onUnsubscriptionSuccess(subscriptionData) {
+            var subscription = SubscriptionAdapter_1.SubscriptionAdapter.fromServerResponse(subscriptionData);
+            subscriptionsStore.removeSubscribedTopicById(subscription.topic.topicId);
+        }
+        function onMessage(data) {
+            var topicName = data.topic.name;
+            var message = MessageAdapter_1.MessageAdapter.fromServerResponse(data);
+            var matchedTopic = subscriptionsStore.getTopicForName(topicName);
+            if (matchedTopic) {
+                message.topic = matchedTopic;
+                matchedTopic.addMessage(message);
+            }
+            else {
+                var topic = TopicAdapter_1.TopicAdapter.fromServerResponse(data.topic);
+                message.topic = topic;
+                topic.addMessage(message);
+                subscriptionsStore.addSubscribedTopic(topic);
+            }
+            messagesStore.addMessage(message);
+        }
+        function onDisconnect() {
+        }
         socket.on('error', onError);
         socket.on('disconnect', onDisconnect);
         socket.on('reconnect_attempt', onReconnectAttempt);
@@ -16,57 +56,6 @@ System.register(['./adapters/TopicAdapter', './adapters/SubscriptionAdapter', '.
         socket.on('message', onMessage);
     }
     exports_1("onConnect", onConnect);
-    function onError() {
-    }
-    exports_1("onError", onError);
-    function onReconnectAttempt() {
-    }
-    exports_1("onReconnectAttempt", onReconnectAttempt);
-    function onReconnecting() {
-    }
-    exports_1("onReconnecting", onReconnecting);
-    function onReconnect() {
-    }
-    exports_1("onReconnect", onReconnect);
-    function onReconnectError() {
-    }
-    exports_1("onReconnectError", onReconnectError);
-    function onReconnectFailed() {
-    }
-    exports_1("onReconnectFailed", onReconnectFailed);
-    function onSubscriptionSuccess(subscriptionData) {
-        var subscription = SubscriptionAdapter_1.SubscriptionAdapter.fromServerResponse(subscriptionData);
-        var matchedTopic = subscriptionsStore.getTopicForName(subscription.topic.name);
-        if (!matchedTopic) {
-            subscriptionsStore.addSubscribedTopic(subscription.topic);
-        }
-    }
-    exports_1("onSubscriptionSuccess", onSubscriptionSuccess);
-    function onUnsubscriptionSuccess(subscriptionData) {
-        var subscription = SubscriptionAdapter_1.SubscriptionAdapter.fromServerResponse(subscriptionData);
-        subscriptionsStore.removeSubscribedTopicById(subscription.topic.topicId);
-    }
-    exports_1("onUnsubscriptionSuccess", onUnsubscriptionSuccess);
-    function onMessage(data) {
-        var topicName = data.topic.name;
-        var message = MessageAdapter_1.MessageAdapter.fromServerResponse(data);
-        var matchedTopic = subscriptionsStore.getTopicForName(topicName);
-        if (matchedTopic) {
-            message.topic = matchedTopic;
-            matchedTopic.addMessage(message);
-        }
-        else {
-            var topic = TopicAdapter_1.TopicAdapter.fromServerResponse(data.topic);
-            message.topic = topic;
-            topic.addMessage(message);
-            subscriptionsStore.addSubscribedTopic(topic);
-        }
-        messagesStore.addMessage(message);
-    }
-    exports_1("onMessage", onMessage);
-    function onDisconnect() {
-    }
-    exports_1("onDisconnect", onDisconnect);
     return {
         setters:[
             function (TopicAdapter_1_1) {
@@ -77,16 +66,8 @@ System.register(['./adapters/TopicAdapter', './adapters/SubscriptionAdapter', '.
             },
             function (MessageAdapter_1_1) {
                 MessageAdapter_1 = MessageAdapter_1_1;
-            },
-            function (SubscriptionsStore_1_1) {
-                SubscriptionsStore_1 = SubscriptionsStore_1_1;
-            },
-            function (MessagesStore_1_1) {
-                MessagesStore_1 = MessagesStore_1_1;
             }],
         execute: function() {
-            subscriptionsStore = SubscriptionsStore_1.SubscriptionsStore.getInstance();
-            messagesStore = MessagesStore_1.MessagesStore.getInstance();
         }
     }
 });

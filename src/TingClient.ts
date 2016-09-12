@@ -5,13 +5,11 @@ import EventEmitter from 'eventemitter3';
 import io from 'socket.io-client';
 import {Observable} from 'rxjs';
 
+import {Topic} from './models/Topic';
 import {Message} from './models/Message';
-import {MessagesStore} from './stores/MessagesStore';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
-import {onConnect, onError, onReconnectAttempt, onReconnect, onReconnectError, onReconnectFailed, onMessage, onDisconnect} from './ConnectionListeners';
-
-let messagesStore:MessagesStore = MessagesStore.getInstance();
-let subscriptionsStore:SubscriptionsStore = SubscriptionsStore.getInstance();
+import {MessagesStore} from './stores/MessagesStore';
+import {onConnect} from './ConnectionListeners';
 
 let _instance:TingClient = null;
 
@@ -24,11 +22,17 @@ export class TingClient extends EventEmitter
     private _serviceBaseURL:string = '';
     private _userId:string = '';
 
+    private _subscriptionsStore:SubscriptionsStore;
+    private _messagesStore:MessagesStore;
+
     constructor(serviceBaseURL:string, userId:string)
     {
         super();
         this._serviceBaseURL = serviceBaseURL;
         this._userId = userId;
+
+        this._subscriptionsStore = new SubscriptionsStore(this);
+        this._messagesStore = new MessagesStore(this);
     }
 
     private _authorize(userId:string):Promise<string>
@@ -74,7 +78,7 @@ export class TingClient extends EventEmitter
 
                 this._transport.on('connect', () =>
                 {
-                    onConnect(this._transport);
+                    onConnect(this._transport, this._subscriptionsStore, this._messagesStore);
 
                     resolve(this._transport);
                 });
@@ -91,11 +95,11 @@ export class TingClient extends EventEmitter
 
     getSubscribedTopics():Observable<Array<Topic>>
     {
-        return subscriptionsStore.subscribedTopics;
+        return this._subscriptionsStore.subscribedTopics;
     }
 
     getMessageStreamForTopicName(topicName:string):Observable<Message>
     {
-        return messagesStore.getMessageStreamForTopicName(topicName);
+        return this._messagesStore.getMessageStreamForTopicName(topicName);
     }
 }

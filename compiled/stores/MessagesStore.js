@@ -2,25 +2,16 @@ System.register(['rxjs'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var rxjs_1;
-    var _instance, SingletonEnforcer, MessagesStore;
+    var MessagesStore;
     return {
         setters:[
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
             }],
         execute: function() {
-            _instance = null;
-            SingletonEnforcer = (function () {
-                function SingletonEnforcer() {
-                }
-                return SingletonEnforcer;
-            }());
             MessagesStore = (function () {
-                function MessagesStore(enforcer) {
+                function MessagesStore() {
                     this._messages = new rxjs_1.ReplaySubject();
-                    if (!enforcer || !(enforcer instanceof SingletonEnforcer)) {
-                        throw new Error("This is a Singleton Class. Use getInstance() method instead.");
-                    }
                 }
                 Object.defineProperty(MessagesStore.prototype, "messages", {
                     get: function () {
@@ -29,12 +20,6 @@ System.register(['rxjs'], function(exports_1, context_1) {
                     enumerable: true,
                     configurable: true
                 });
-                MessagesStore.getInstance = function () {
-                    if (!_instance) {
-                        _instance = new MessagesStore(new SingletonEnforcer());
-                    }
-                    return _instance;
-                };
                 MessagesStore.prototype.addMessage = function (message) {
                     this.messages.next(message);
                 };

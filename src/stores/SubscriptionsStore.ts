@@ -2,10 +2,6 @@ import _ from 'lodash';
 import {Observable, BehaviorSubject} from 'rxjs';
 import {Topic} from '../models/Topic';
 
-let _instance:SubscriptionsStore = null;
-
-class SingletonEnforcer {}
-
 export class SubscriptionsStore
 {
     private _subscribedTopics:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>([]);
@@ -14,22 +10,8 @@ export class SubscriptionsStore
         return this._subscribedTopics;
     }
 
-    constructor(enforcer:SingletonEnforcer)
+    constructor()
     {
-        if(!enforcer || !(enforcer instanceof SingletonEnforcer))
-        {
-            throw new Error(`This is a Singleton Class. Use getInstance() method instead.`);
-        }
-    }
-
-    static getInstance()
-    {
-        if(!_instance)
-        {
-            _instance = new SubscriptionsStore(new SingletonEnforcer());
-        }
-
-        return _instance;
     }
 
     addSubscribedTopic(topic:Topic)
