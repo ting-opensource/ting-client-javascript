@@ -78,7 +78,7 @@ export class TingClient extends EventEmitter
 
                 this._transport.on('connect', () =>
                 {
-                    onConnect(this._transport, this._subscriptionsStore, this._messagesStore);
+                    onConnect(this._transport, this, this._subscriptionsStore, this._messagesStore);
 
                     resolve(this._transport);
                 });

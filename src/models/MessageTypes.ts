@@ -1,16 +1,16 @@
 export class MessageTypes
 {
-    static get TEXT()
+    static get TEXT():string
     {
         return 'text/plain';
     }
 
-    static get HTML()
+    static get HTML():string
     {
         return 'text/html';
     }
 
-    static get JSON()
+    static get JSON():string
     {
         return 'application/json';
     }

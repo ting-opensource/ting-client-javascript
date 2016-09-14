@@ -1,7 +1,7 @@
-System.register(['moment', 'lodash', '../models/Message'], function(exports_1, context_1) {
+System.register(['moment', 'lodash', '../models/Message', './TopicAdapter'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var moment_1, lodash_1, Message_1;
+    var moment_1, lodash_1, Message_1, TopicAdapter_1;
     var MessageAdapter;
     return {
         setters:[
@@ -13,6 +13,9 @@ System.register(['moment', 'lodash', '../models/Message'], function(exports_1, c
             },
             function (Message_1_1) {
                 Message_1 = Message_1_1;
+            },
+            function (TopicAdapter_1_1) {
+                TopicAdapter_1 = TopicAdapter_1_1;
             }],
         execute: function() {
             MessageAdapter = (function () {
@@ -20,6 +23,7 @@ System.register(['moment', 'lodash', '../models/Message'], function(exports_1, c
                 }
                 MessageAdapter.fromServerResponse = function (messageData) {
                     var message = new Message_1.Message(lodash_1.default.extend({}, messageData, {
+                        topic: TopicAdapter_1.TopicAdapter.fromServerResponse(messageData.topic),
                         createdAt: messageData.createdAt ? moment_1.default.utc(messageData.createdAt) : null,
                         updatedAt: messageData.updatedAt ? moment_1.default.utc(messageData.updatedAt) : null
                     }));

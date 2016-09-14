@@ -3,6 +3,36 @@ System.import('compiled:TingClient')
 {
     let client = new TingClient('http://localhost:9999', 'TEST_SUBSCRIBER');
 
+    client.on('subscription-live', function(subscription)
+    {
+        console.info('subscription-live');
+        console.info(subscription);
+    });
+
+    client.on('subscription-off', function(subscription)
+    {
+        console.warn('subscription-off');
+        console.warn(subscription);
+    });
+
+    client.on('message', function(message)
+    {
+        console.info('message');
+        console.info(message);
+    });
+
+    client.on('message:test-topic', function(message)
+    {
+        console.info('message:test-topic');
+        console.info(message);
+    });
+
+    client.on('message:other-test-topic', function(message)
+    {
+        console.info('message:other-test-topic');
+        console.info(message);
+    });
+
     client.connect()
     .then(function(socket)
     {
@@ -15,12 +45,12 @@ System.import('compiled:TingClient')
 
         client.getMessageStreamForTopicName('test-topic').subscribe((message) =>
         {
-            console.info(message);
+            console.debug(message);
         });
 
         client.getMessageStreamForTopicName('other-test-topic').subscribe((message) =>
         {
-            console.warn(message);
+            console.debug(message);
         });
     })
     .catch(function(error)

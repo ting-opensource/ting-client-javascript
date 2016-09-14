@@ -1,15 +1,18 @@
 import io from 'socket.io-client';
 
+import {TingClient} from './TingClient';
 import {IIncomingTopic, Topic} from './models/Topic';
 import {IIncomingSubscription, Subscription} from './models/Subscription';
 import {IIncomingMessage, Message} from './models/Message';
+import {SocketConnectionEvents} from './models/SocketConnectionEvents';
+import {TingEvents} from './models/TingEvents';
 import {TopicAdapter} from './adapters/TopicAdapter';
 import {SubscriptionAdapter} from './adapters/SubscriptionAdapter';
 import {MessageAdapter} from './adapters/MessageAdapter';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
 import {MessagesStore} from './stores/MessagesStore';
 
-export function onConnect(socket:SocketIOClient.Socket, subscriptionsStore:SubscriptionsStore, messagesStore:MessagesStore)
+export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient, subscriptionsStore:SubscriptionsStore, messagesStore:MessagesStore)
 {
     function onError()
     {
@@ -41,23 +44,27 @@ export function onConnect(socket:SocketIOClient.Socket, subscriptionsStore:Subsc
 
     }
 
-    function onSubscriptionSuccess(subscriptionData:IIncomingSubscription)
+    function onSubscriptionLive(topicData:IIncomingTopic)
     {
-        let subscription:Subscription = SubscriptionAdapter.fromServerResponse(subscriptionData);
+        let topic:Topic = TopicAdapter.fromServerResponse(topicData);
 
-        let matchedTopic:Topic = subscriptionsStore.getTopicForName(subscription.topic.name)
+        let matchedTopic:Topic = subscriptionsStore.getTopicForName(topic.name)
 
         if(!matchedTopic)
         {
-            subscriptionsStore.addSubscribedTopic(subscription.topic);
+            subscriptionsStore.addSubscribedTopic(topic);
         }
+
+        clientFacade.emit('subscription-live', topic);
     }
 
-    function onUnsubscriptionSuccess(subscriptionData:IIncomingSubscription)
+    function onSubscriptionOff(topicData:IIncomingTopic)
     {
-        let subscription:Subscription = SubscriptionAdapter.fromServerResponse(subscriptionData);
+        let topic:Topic = TopicAdapter.fromServerResponse(topicData);
 
-        subscriptionsStore.removeSubscribedTopicById(subscription.topic.topicId);
+        subscriptionsStore.removeSubscribedTopicById(topic.topicId);
+
+        clientFacade.emit('subscription-off', topic);
     }
 
     function onMessage(data:IIncomingMessage)
@@ -82,6 +89,9 @@ export function onConnect(socket:SocketIOClient.Socket, subscriptionsStore:Subsc
         }
 
         messagesStore.addMessage(message);
+
+        clientFacade.emit('message', message);
+        clientFacade.emit(`message:${message.topic.name}`, message);
     }
 
     function onDisconnect()
@@ -89,16 +99,16 @@ export function onConnect(socket:SocketIOClient.Socket, subscriptionsStore:Subsc
 
     }
 
-    socket.on('error', onError);
-    socket.on('disconnect', onDisconnect);
+    socket.on(SocketConnectionEvents.ERROR, onError);
+    socket.on(SocketConnectionEvents.DISCONNECT, onDisconnect);
 
-    socket.on('reconnect_attempt', onReconnectAttempt);
-    socket.on('reconnecting', onReconnecting);
-    socket.on('reconnect', onReconnect);
-    socket.on('reconnect_error', onReconnectError);
-    socket.on('reconnect_failed', onReconnectFailed);
+    socket.on(SocketConnectionEvents.RECONNECT_ATTEMPT, onReconnectAttempt);
+    socket.on(SocketConnectionEvents.RECONNECTING, onReconnecting);
+    socket.on(SocketConnectionEvents.RECONNECT, onReconnect);
+    socket.on(SocketConnectionEvents.RECONNECT_ERROR, onReconnectError);
+    socket.on(SocketConnectionEvents.RECONNECT_FAILED, onReconnectFailed);
 
-    socket.on('subscription-success', onSubscriptionSuccess);
-    socket.on('unsubscription-success', onSubscriptionSuccess);
-    socket.on('message', onMessage);
+    socket.on(TingEvents.SUBSCRIPTION_LIVE, onSubscriptionLive);
+    socket.on(TingEvents.SUBSCRIPTION_OFF, onSubscriptionOff);
+    socket.on(TingEvents.MESSAGE, onMessage);
 }

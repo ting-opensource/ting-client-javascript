@@ -77,7 +77,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
                                 query: "token=" + token
                             });
                             _this._transport.on('connect', function () {
-                                ConnectionListeners_1.onConnect(_this._transport, _this._subscriptionsStore, _this._messagesStore);
+                                ConnectionListeners_1.onConnect(_this._transport, _this, _this._subscriptionsStore, _this._messagesStore);
                                 resolve(_this._transport);
                             });
                             _this._transport.once('error', function (error) {
