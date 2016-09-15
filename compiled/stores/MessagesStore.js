@@ -11,7 +11,7 @@ System.register(['rxjs'], function(exports_1, context_1) {
         execute: function() {
             MessagesStore = (function () {
                 function MessagesStore() {
-                    this._messages = new rxjs_1.ReplaySubject();
+                    this._messages = new rxjs_1.BehaviorSubject([]);
                 }
                 Object.defineProperty(MessagesStore.prototype, "messages", {
                     get: function () {
@@ -21,11 +21,13 @@ System.register(['rxjs'], function(exports_1, context_1) {
                     configurable: true
                 });
                 MessagesStore.prototype.addMessage = function (message) {
-                    this.messages.next(message);
+                    var messages = this.messages.getValue();
+                    messages.push(message);
+                    this.messages.next(messages);
                 };
                 MessagesStore.prototype.getMessageStreamForTopicName = function (topicName) {
                     return this.messages
-                        .filter(function (datum) {
+                        .filter(function (datum, index) {
                         return datum.topic.name === topicName;
                     });
                 };

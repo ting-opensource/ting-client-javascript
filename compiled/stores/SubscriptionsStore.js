@@ -46,6 +46,15 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     });
                     return matchedTopic || null;
                 };
+                SubscriptionsStore.prototype.getMessageStreamForTopicName = function (topicName) {
+                    var matchingTopic = this.getTopicForName(topicName);
+                    if (matchingTopic) {
+                        return matchingTopic.messages;
+                    }
+                    else {
+                        throw new Error("topic with name " + topicName + " not yet subscribed!");
+                    }
+                };
                 return SubscriptionsStore;
             }());
             exports_1("SubscriptionsStore", SubscriptionsStore);

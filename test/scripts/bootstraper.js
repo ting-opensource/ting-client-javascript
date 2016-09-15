@@ -40,17 +40,20 @@ System.import('compiled:TingClient')
 
         client.getSubscribedTopics().subscribe((topics) =>
         {
-            console.debug(topics);
+            console.warn('topics updated');
+            console.warn(topics);
         });
 
-        client.getMessageStreamForTopicName('test-topic').subscribe((message) =>
+        client.getMessageStreamForTopicName('test-topic').subscribe((messages) =>
         {
-            console.debug(message);
+            console.warn('messages updated on test-topic');
+            console.warn(messages);
         });
 
-        client.getMessageStreamForTopicName('other-test-topic').subscribe((message) =>
+        client.getMessageStreamForTopicName('other-test-topic').subscribe((messages) =>
         {
-            console.debug(message);
+            console.warn('messages updated on other-test-topic');
+            console.warn(messages);
         });
     })
     .catch(function(error)

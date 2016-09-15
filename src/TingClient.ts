@@ -8,7 +8,6 @@ import {Observable} from 'rxjs';
 import {Topic} from './models/Topic';
 import {Message} from './models/Message';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
-import {MessagesStore} from './stores/MessagesStore';
 import {onConnect} from './ConnectionListeners';
 
 let _instance:TingClient = null;
@@ -23,7 +22,6 @@ export class TingClient extends EventEmitter
     private _userId:string = '';
 
     private _subscriptionsStore:SubscriptionsStore;
-    private _messagesStore:MessagesStore;
 
     constructor(serviceBaseURL:string, userId:string)
     {
@@ -32,7 +30,6 @@ export class TingClient extends EventEmitter
         this._userId = userId;
 
         this._subscriptionsStore = new SubscriptionsStore();
-        this._messagesStore = new MessagesStore();
     }
 
     private _authorize(userId:string):Promise<string>
@@ -78,7 +75,7 @@ export class TingClient extends EventEmitter
 
                 this._transport.on('connect', () =>
                 {
-                    onConnect(this._transport, this, this._subscriptionsStore, this._messagesStore);
+                    onConnect(this._transport, this, this._subscriptionsStore);
 
                     resolve(this._transport);
                 });
@@ -98,8 +95,8 @@ export class TingClient extends EventEmitter
         return this._subscriptionsStore.subscribedTopics;
     }
 
-    getMessageStreamForTopicName(topicName:string):Observable<Message>
+    getMessageStreamForTopicName(topicName:string):Observable<Message[]>
     {
-        return this._messagesStore.getMessageStreamForTopicName(topicName);
+        return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
     }
 }

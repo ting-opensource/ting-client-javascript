@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import {Observable, BehaviorSubject} from 'rxjs';
 import {Topic} from '../models/Topic';
+import {Message} from '../models/Message';
 
 export class SubscriptionsStore
 {
@@ -45,5 +46,19 @@ export class SubscriptionsStore
         });
 
         return matchedTopic || null;
+    }
+
+    getMessageStreamForTopicName(topicName:string):Observable<Array<Message>>
+    {
+        let matchingTopic:Topic = this.getTopicForName(topicName);
+
+        if(matchingTopic)
+        {
+            return matchingTopic.messages;
+        }
+        else
+        {
+            throw new Error(`topic with name ${topicName} not yet subscribed!`);
+        }
     }
 }

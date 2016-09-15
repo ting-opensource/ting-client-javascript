@@ -1,4 +1,4 @@
-System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/SubscriptionsStore', './stores/MessagesStore', './ConnectionListeners'], function(exports_1, context_1) {
+System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/SubscriptionsStore', './ConnectionListeners'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
@@ -6,7 +6,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var eventemitter3_1, socket_io_client_1, SubscriptionsStore_1, MessagesStore_1, ConnectionListeners_1;
+    var eventemitter3_1, socket_io_client_1, SubscriptionsStore_1, ConnectionListeners_1;
     var _instance, SingletonEnforcer, TingClient;
     return {
         setters:[
@@ -19,9 +19,6 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
             },
             function (SubscriptionsStore_1_1) {
                 SubscriptionsStore_1 = SubscriptionsStore_1_1;
-            },
-            function (MessagesStore_1_1) {
-                MessagesStore_1 = MessagesStore_1_1;
             },
             function (ConnectionListeners_1_1) {
                 ConnectionListeners_1 = ConnectionListeners_1_1;
@@ -42,7 +39,6 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
                     this._serviceBaseURL = serviceBaseURL;
                     this._userId = userId;
                     this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore();
-                    this._messagesStore = new MessagesStore_1.MessagesStore();
                 }
                 TingClient.prototype._authorize = function (userId) {
                     return fetch(this._serviceBaseURL + '/authorize', {
@@ -77,7 +73,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
                                 query: "token=" + token
                             });
                             _this._transport.on('connect', function () {
-                                ConnectionListeners_1.onConnect(_this._transport, _this, _this._subscriptionsStore, _this._messagesStore);
+                                ConnectionListeners_1.onConnect(_this._transport, _this, _this._subscriptionsStore);
                                 resolve(_this._transport);
                             });
                             _this._transport.once('error', function (error) {
@@ -91,7 +87,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './stores/
                     return this._subscriptionsStore.subscribedTopics;
                 };
                 TingClient.prototype.getMessageStreamForTopicName = function (topicName) {
-                    return this._messagesStore.getMessageStreamForTopicName(topicName);
+                    return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
                 };
                 return TingClient;
             }(eventemitter3_1.default));

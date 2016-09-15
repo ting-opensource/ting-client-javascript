@@ -19,13 +19,15 @@ System.register(['rxjs'], function(exports_1, context_1) {
                     this.createdAt = null;
                     this.updatedBy = '';
                     this.updatedAt = null;
-                    this.messages = new rxjs_1.ReplaySubject(BUFFER_SIZE);
+                    this.messages = new rxjs_1.BehaviorSubject([]);
                     for (var key in data) {
                         this[key] = data[key];
                     }
                 }
                 Topic.prototype.addMessage = function (message) {
-                    this.messages.next(message);
+                    var messages = this.messages.getValue();
+                    messages.push(message);
+                    this.messages.next(messages);
                 };
                 return Topic;
             }());

@@ -2,7 +2,7 @@ System.register(['./models/SocketConnectionEvents', './models/TingEvents', './ad
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var SocketConnectionEvents_1, TingEvents_1, TopicAdapter_1, MessageAdapter_1;
-    function onConnect(socket, clientFacade, subscriptionsStore, messagesStore) {
+    function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
         }
         function onReconnectAttempt() {
@@ -42,7 +42,6 @@ System.register(['./models/SocketConnectionEvents', './models/TingEvents', './ad
                 topic.addMessage(message);
                 subscriptionsStore.addSubscribedTopic(topic);
             }
-            messagesStore.addMessage(message);
             clientFacade.emit('message', message);
             clientFacade.emit("message:" + message.topic.name, message);
         }

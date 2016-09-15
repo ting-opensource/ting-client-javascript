@@ -10,9 +10,8 @@ import {TopicAdapter} from './adapters/TopicAdapter';
 import {SubscriptionAdapter} from './adapters/SubscriptionAdapter';
 import {MessageAdapter} from './adapters/MessageAdapter';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
-import {MessagesStore} from './stores/MessagesStore';
 
-export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient, subscriptionsStore:SubscriptionsStore, messagesStore:MessagesStore)
+export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient, subscriptionsStore:SubscriptionsStore)
 {
     function onError()
     {
@@ -87,8 +86,6 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
             topic.addMessage(message);
             subscriptionsStore.addSubscribedTopic(topic);
         }
-
-        messagesStore.addMessage(message);
 
         clientFacade.emit('message', message);
         clientFacade.emit(`message:${message.topic.name}`, message);

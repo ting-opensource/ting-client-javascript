@@ -1,5 +1,5 @@
 import moment from 'moment';
-import {ReplaySubject} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 
 import {Message} from './Message';
 
@@ -25,7 +25,7 @@ export class Topic
     createdAt:moment.MomentStatic = null;
     updatedBy:string = '';
     updatedAt:moment.MomentStatic = null;
-    messages:ReplaySubject<Message> = new ReplaySubject<Message>(BUFFER_SIZE);
+    messages:BehaviorSubject<Array<Message>> = new BehaviorSubject<Array<Message>>([]);
 
     constructor(data:IIncomingTopic)
     {
@@ -37,6 +37,8 @@ export class Topic
 
     addMessage(message:Message)
     {
-        this.messages.next(message);
+        let messages:Array<Message> = this.messages.getValue();
+        messages.push(message);
+        this.messages.next(messages);
     }
 }
