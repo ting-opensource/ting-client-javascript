@@ -25,7 +25,11 @@
                 'lodash': 'npm:lodash/',
                 'moment': 'npm:moment/min/moment.min.js',
                 'socket.io-client': 'npm:socket.io-client/socket.io.js',
-                'whatwg-fetch': 'npm:whatwg-fetch/fetch.js'
+                'whatwg-fetch': 'npm:whatwg-fetch/fetch.js',
+                'rxjs': 'npm:rxjs/bundles/Rx.min.js',
+                'query-string': 'npm:query-string/index.js',
+                'strict-uri-encode': 'npm:strict-uri-encode/index.js',
+                'object-assign': 'npm:object-assign/index.js'
             },
             packages: {
                 'compiled:' : {
@@ -52,6 +56,10 @@
         .then(function()
         {
             console.info('Test Environment Ready!');
+        })
+        .catch(function(error)
+        {
+            debugger;
         });
     </script>
 </body>

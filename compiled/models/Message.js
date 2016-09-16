@@ -10,7 +10,7 @@ System.register(['./MessageTypes'], function(exports_1, context_1) {
             }],
         execute: function() {
             Message = (function () {
-                function Message() {
+                function Message(data) {
                     this.messageId = '';
                     this.topic = null;
                     this.publisher = '';
@@ -19,6 +19,9 @@ System.register(['./MessageTypes'], function(exports_1, context_1) {
                     this.createdAt = null;
                     this.updatedBy = '';
                     this.updatedAt = null;
+                    for (var key in data) {
+                        this[key] = data[key];
+                    }
                 }
                 return Message;
             }());

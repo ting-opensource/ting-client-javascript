@@ -1,7 +1,18 @@
 import moment from 'moment/moment';
 
 import {MessageTypes} from './MessageTypes';
-import {Topic} from './Topic';
+import {IIncomingTopic, Topic} from './Topic';
+
+export interface IIncomingMessage
+{
+    messageId:string;
+    topic:IIncomingTopic,
+    publisher:string;
+    type:string;
+    body:string;
+    createdAt:string;
+    updatedAt:string;
+}
 
 export class Message
 {
@@ -14,7 +25,11 @@ export class Message
     updatedBy:string = '';
     updatedAt:moment.MomentStatic = null;
 
-    constructor()
+    constructor(data:IIncomingMessage)
     {
+        for(let key in data)
+        {
+            this[key] = data[key];
+        }
     }
 }

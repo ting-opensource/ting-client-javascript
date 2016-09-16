@@ -3,6 +3,14 @@ import 'whatwg-fetch';
 import _ from 'lodash';
 import EventEmitter from 'eventemitter3';
 import io from 'socket.io-client';
+import {Observable} from 'rxjs';
+
+import {Session} from './models/Session';
+import {Topic} from './models/Topic';
+import {Message} from './models/Message';
+import {AuthenticationService} from './services/AuthenticationService';
+import {SubscriptionsStore} from './stores/SubscriptionsStore';
+import {onConnect} from './ConnectionListeners';
 
 let _instance:TingClient = null;
 
@@ -11,75 +19,45 @@ class SingletonEnforcer {}
 export class TingClient extends EventEmitter
 {
     private _transport:SocketIOClient.Socket;
+    private _session:Session;
+    get session():Session
+    {
+        return this._session;
+    }
 
     private _serviceBaseURL:string = '';
     private _userId:string = '';
+
+    private _subscriptionsStore:SubscriptionsStore;
 
     constructor(serviceBaseURL:string, userId:string)
     {
         super();
         this._serviceBaseURL = serviceBaseURL;
         this._userId = userId;
+
+        this._session = new Session(serviceBaseURL, userId);
+
+        this._subscriptionsStore = new SubscriptionsStore(this);
     }
 
-    private _authorize(userId:string):Promise<string>
+    connect():Promise<SocketIOClient.Socket>
     {
-        return fetch(this._serviceBaseURL + '/authorize', {
-            method: 'POST',
-            body: JSON.stringify({
-                userId: this._userId
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((response:any) =>
-        {
-            if(response.ok)
-            {
-                return response.json();
-            }
-            else
-            {
-                let error = new Error(response.statusText);
-                throw error;
-            }
-        })
-        .then((response:any) =>
-        {
-            return response.token;
-        });
-    }
-
-    connect():Promise<string>
-    {
-        return this._authorize(this._userId)
-        .then((token:string) =>
+        return AuthenticationService.authenticateSession(this._session)
+        .then((session:Session) =>
         {
             let liveConnectionPromise = new Promise((resolve, reject) =>
             {
                 this._transport = io(this._serviceBaseURL, {
                     path: '/live',
-                    query: `token=${token}`
+                    query: `token=${session.token}`
                 });
 
                 this._transport.on('connect', () =>
                 {
-                    this._transport.on('disconnect', () =>
-                    {
-                    });
+                    onConnect(this._transport, this, this._subscriptionsStore);
 
-                    this._transport.on('error', (error) =>
-                    {
-                    });
-
-                    this._transport.on('message', function(data)
-                    {
-                        console.info('message');
-                        console.log(data);
-                    });
-
-                    resolve(this._transport.id);
+                    resolve(this._transport);
                 });
 
                 this._transport.once('error', (error) =>
@@ -88,7 +66,37 @@ export class TingClient extends EventEmitter
                 });
             });
 
-            return <Promise<string>> liveConnectionPromise;
+            return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
+    }
+
+    getSubscribedTopics():Observable<Array<Topic>>
+    {
+        return this._subscriptionsStore.subscribedTopics;
+    }
+
+    getSubscribedTopicByName(topicName:string):Topic
+    {
+        return this._subscriptionsStore.getTopicForName(topicName);
+    }
+
+    getMessageStreamForTopicName(topicName:string):Observable<Message[]>
+    {
+        return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
+    }
+
+    getMessageStreamForTopic(topic:Topic):Observable<Message[]>
+    {
+        return this._subscriptionsStore.getMessageStreamForTopic(topic);
+    }
+
+    fetchMessagesForTopicSinceMessage(topic:Topic, sinceMessage:Message):Promise<Array<Message>>
+    {
+        return this._subscriptionsStore.fetchMessagesForTopicSinceMessage(topic, sinceMessage);
+    }
+
+    fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
+    {
+        return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
     }
 }

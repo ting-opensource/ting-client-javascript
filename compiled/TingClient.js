@@ -1,4 +1,4 @@
-System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(exports_1, context_1) {
+System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './models/Session', './services/AuthenticationService', './stores/SubscriptionsStore', './ConnectionListeners'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __extends = (this && this.__extends) || function (d, b) {
@@ -6,7 +6,7 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    var eventemitter3_1, socket_io_client_1;
+    var eventemitter3_1, socket_io_client_1, Session_1, AuthenticationService_1, SubscriptionsStore_1, ConnectionListeners_1;
     var _instance, SingletonEnforcer, TingClient;
     return {
         setters:[
@@ -16,6 +16,18 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
             },
             function (socket_io_client_1_1) {
                 socket_io_client_1 = socket_io_client_1_1;
+            },
+            function (Session_1_1) {
+                Session_1 = Session_1_1;
+            },
+            function (AuthenticationService_1_1) {
+                AuthenticationService_1 = AuthenticationService_1_1;
+            },
+            function (SubscriptionsStore_1_1) {
+                SubscriptionsStore_1 = SubscriptionsStore_1_1;
+            },
+            function (ConnectionListeners_1_1) {
+                ConnectionListeners_1 = ConnectionListeners_1_1;
             }],
         execute: function() {
             _instance = null;
@@ -32,49 +44,28 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
                     this._userId = '';
                     this._serviceBaseURL = serviceBaseURL;
                     this._userId = userId;
+                    this._session = new Session_1.Session(serviceBaseURL, userId);
+                    this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore(this);
                 }
-                TingClient.prototype._authorize = function (userId) {
-                    return fetch(this._serviceBaseURL + '/authorize', {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            userId: this._userId
-                        }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    })
-                        .then(function (response) {
-                        if (response.ok) {
-                            return response.json();
-                        }
-                        else {
-                            var error = new Error(response.statusText);
-                            throw error;
-                        }
-                    })
-                        .then(function (response) {
-                        return response.token;
-                    });
-                };
+                Object.defineProperty(TingClient.prototype, "session", {
+                    get: function () {
+                        return this._session;
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 TingClient.prototype.connect = function () {
                     var _this = this;
-                    return this._authorize(this._userId)
-                        .then(function (token) {
+                    return AuthenticationService_1.AuthenticationService.authenticateSession(this._session)
+                        .then(function (session) {
                         var liveConnectionPromise = new Promise(function (resolve, reject) {
                             _this._transport = socket_io_client_1.default(_this._serviceBaseURL, {
                                 path: '/live',
-                                query: "token=" + token
+                                query: "token=" + session.token
                             });
                             _this._transport.on('connect', function () {
-                                _this._transport.on('disconnect', function () {
-                                });
-                                _this._transport.on('error', function (error) {
-                                });
-                                _this._transport.on('message', function (data) {
-                                    console.info('message');
-                                    console.log(data);
-                                });
-                                resolve(_this._transport.id);
+                                ConnectionListeners_1.onConnect(_this._transport, _this, _this._subscriptionsStore);
+                                resolve(_this._transport);
                             });
                             _this._transport.once('error', function (error) {
                                 reject(error);
@@ -82,6 +73,24 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client'], function(
                         });
                         return liveConnectionPromise;
                     });
+                };
+                TingClient.prototype.getSubscribedTopics = function () {
+                    return this._subscriptionsStore.subscribedTopics;
+                };
+                TingClient.prototype.getSubscribedTopicByName = function (topicName) {
+                    return this._subscriptionsStore.getTopicForName(topicName);
+                };
+                TingClient.prototype.getMessageStreamForTopicName = function (topicName) {
+                    return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
+                };
+                TingClient.prototype.getMessageStreamForTopic = function (topic) {
+                    return this._subscriptionsStore.getMessageStreamForTopic(topic);
+                };
+                TingClient.prototype.fetchMessagesForTopicSinceMessage = function (topic, sinceMessage) {
+                    return this._subscriptionsStore.fetchMessagesForTopicSinceMessage(topic, sinceMessage);
+                };
+                TingClient.prototype.fetchMessagesForTopicTillMessage = function (topic, tillMessage) {
+                    return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
                 };
                 return TingClient;
             }(eventemitter3_1.default));
