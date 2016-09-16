@@ -55,6 +55,19 @@ System.import('compiled:TingClient')
             console.warn('messages updated on other-test-topic');
             console.warn(messages);
         });
+
+        client.getMessageStreamForTopicName('other-test-topic').subscribe((messages) =>
+        {
+            console.warn('messages updated on other-test-topic');
+            console.warn(messages);
+        });
+
+        setTimeout(function()
+        {
+            let testTopic = client.getSubscribedTopicByName('test-topic');
+            let messages = client.getMessageStreamForTopic(testTopic).getValue();
+            client.fetchMessagesForTopicSinceMessage(testTopic, messages[messages.length - 1]);
+        }, 3000);
     })
     .catch(function(error)
     {

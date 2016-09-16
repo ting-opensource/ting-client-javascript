@@ -1,4 +1,5 @@
 import moment from 'moment';
+import _ from 'lodash';
 import {BehaviorSubject} from 'rxjs';
 
 import {Message} from './Message';
@@ -35,10 +36,23 @@ export class Topic
         }
     }
 
-    addMessage(message:Message)
+    addMessage(message:Message):BehaviorSubject<Array<Message>>
     {
         let messages:Array<Message> = this.messages.getValue();
         messages.push(message);
+
         this.messages.next(messages);
+
+        return this.messages;
+    }
+
+    mergeMessages(incomingMessages:Array<Message>):BehaviorSubject<Array<Message>>
+    {
+        let existingMesssages:Array<Message> = this.messages.getValue();
+        let mergedMessages:Array<Message> = _.unionBy(incomingMessages, existingMesssages, 'messageId');
+
+        this.messages.next(mergedMessages);
+
+        return this.messages;
     }
 }

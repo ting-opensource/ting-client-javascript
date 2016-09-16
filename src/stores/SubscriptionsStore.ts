@@ -1,18 +1,24 @@
 import _ from 'lodash';
 import {Observable, BehaviorSubject} from 'rxjs';
+
+import {TingClient} from '../TingClient';
 import {Topic} from '../models/Topic';
 import {Message} from '../models/Message';
+import {MessagesService} from '../services/MessagesService';
 
 export class SubscriptionsStore
 {
+    private _client:TingClient = null;
+
     private _subscribedTopics:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>([]);
     get subscribedTopics():BehaviorSubject<Array<Topic>>
     {
         return this._subscribedTopics;
     }
 
-    constructor()
+    constructor(client:TingClient)
     {
+        this._client = client;
     }
 
     addSubscribedTopic(topic:Topic)
@@ -29,11 +35,14 @@ export class SubscriptionsStore
         {
             return datum.topicId === topicId;
         });
-        let matchedTopicIndex = _.indexOf(subscribedTopicsArray, matchedTopic);
-        if(matchedTopicIndex >= 0)
+
+        if(matchedTopic)
         {
+            let matchedTopicIndex = _.indexOf(subscribedTopicsArray, matchedTopic);
             subscribedTopicsArray.splice(matchedTopicIndex, 1);
+            matchedTopic.messages.complete();
         }
+
         this.subscribedTopics.next(subscribedTopicsArray);
     }
 
@@ -48,6 +57,11 @@ export class SubscriptionsStore
         return matchedTopic || null;
     }
 
+    getMessageStreamForTopic(topic:Topic):Observable<Array<Message>>
+    {
+        return topic.messages;
+    }
+
     getMessageStreamForTopicName(topicName:string):Observable<Array<Message>>
     {
         let matchingTopic:Topic = this.getTopicForName(topicName);
@@ -60,5 +74,25 @@ export class SubscriptionsStore
         {
             throw new Error(`topic with name ${topicName} not yet subscribed!`);
         }
+    }
+
+    fetchMessagesForTopicSinceMessage(topic:Topic, sinceMessage:Message):Promise<Array<Message>>
+    {
+        return MessagesService.fetchMessagesForTopicSinceMessage(this._client.session, topic, sinceMessage)
+        .then((messages:Array<Message>) =>
+        {
+            topic.mergeMessages(messages);
+            return messages;
+        });
+    }
+
+    fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
+    {
+        return MessagesService.fetchMessagesForTopicTillMessage(this._client.session, topic, tillMessage)
+        .then((messages:Array<Message>) =>
+        {
+            topic.mergeMessages(messages);
+            return messages;
+        });
     }
 }

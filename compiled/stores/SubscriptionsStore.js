@@ -1,7 +1,7 @@
-System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
+System.register(['lodash', 'rxjs', '../services/MessagesService'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var lodash_1, rxjs_1;
+    var lodash_1, rxjs_1, MessagesService_1;
     var SubscriptionsStore;
     return {
         setters:[
@@ -10,11 +10,16 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
             },
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
+            },
+            function (MessagesService_1_1) {
+                MessagesService_1 = MessagesService_1_1;
             }],
         execute: function() {
             SubscriptionsStore = (function () {
-                function SubscriptionsStore() {
+                function SubscriptionsStore(client) {
+                    this._client = null;
                     this._subscribedTopics = new rxjs_1.BehaviorSubject([]);
+                    this._client = client;
                 }
                 Object.defineProperty(SubscriptionsStore.prototype, "subscribedTopics", {
                     get: function () {
@@ -33,9 +38,10 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     var matchedTopic = lodash_1.default.find(subscribedTopicsArray, function (datum) {
                         return datum.topicId === topicId;
                     });
-                    var matchedTopicIndex = lodash_1.default.indexOf(subscribedTopicsArray, matchedTopic);
-                    if (matchedTopicIndex >= 0) {
+                    if (matchedTopic) {
+                        var matchedTopicIndex = lodash_1.default.indexOf(subscribedTopicsArray, matchedTopic);
                         subscribedTopicsArray.splice(matchedTopicIndex, 1);
+                        matchedTopic.messages.complete();
                     }
                     this.subscribedTopics.next(subscribedTopicsArray);
                 };
@@ -46,6 +52,9 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     });
                     return matchedTopic || null;
                 };
+                SubscriptionsStore.prototype.getMessageStreamForTopic = function (topic) {
+                    return topic.messages;
+                };
                 SubscriptionsStore.prototype.getMessageStreamForTopicName = function (topicName) {
                     var matchingTopic = this.getTopicForName(topicName);
                     if (matchingTopic) {
@@ -54,6 +63,20 @@ System.register(['lodash', 'rxjs'], function(exports_1, context_1) {
                     else {
                         throw new Error("topic with name " + topicName + " not yet subscribed!");
                     }
+                };
+                SubscriptionsStore.prototype.fetchMessagesForTopicSinceMessage = function (topic, sinceMessage) {
+                    return MessagesService_1.MessagesService.fetchMessagesForTopicSinceMessage(this._client.session, topic, sinceMessage)
+                        .then(function (messages) {
+                        topic.mergeMessages(messages);
+                        return messages;
+                    });
+                };
+                SubscriptionsStore.prototype.fetchMessagesForTopicTillMessage = function (topic, tillMessage) {
+                    return MessagesService_1.MessagesService.fetchMessagesForTopicTillMessage(this._client.session, topic, tillMessage)
+                        .then(function (messages) {
+                        topic.mergeMessages(messages);
+                        return messages;
+                    });
                 };
                 return SubscriptionsStore;
             }());
