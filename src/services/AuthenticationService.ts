@@ -7,7 +7,7 @@ export class AuthenticationService
 {
     static authenticateSession(session:Session):Promise<Session>
     {
-        return fetch(session.serviceBaseURL + '/authorize', {
+        return fetch(`${session.serviceBaseURL}/authorize`, {
             method: 'POST',
             body: JSON.stringify({
                 userId: session.userId

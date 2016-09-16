@@ -10,7 +10,7 @@ System.register(['whatwg-fetch'], function(exports_1, context_1) {
                 function AuthenticationService() {
                 }
                 AuthenticationService.authenticateSession = function (session) {
-                    return fetch(session.serviceBaseURL + '/authorize', {
+                    return fetch(session.serviceBaseURL + "/authorize", {
                         method: 'POST',
                         body: JSON.stringify({
                             userId: session.userId

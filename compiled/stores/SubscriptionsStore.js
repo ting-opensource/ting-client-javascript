@@ -1,7 +1,7 @@
-System.register(['lodash', 'rxjs', '../services/MessagesService'], function(exports_1, context_1) {
+System.register(['lodash', 'rxjs', '../services/SubscriptionService', '../services/MessagesService'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var lodash_1, rxjs_1, MessagesService_1;
+    var lodash_1, rxjs_1, SubscriptionService_1, MessagesService_1;
     var SubscriptionsStore;
     return {
         setters:[
@@ -10,6 +10,9 @@ System.register(['lodash', 'rxjs', '../services/MessagesService'], function(expo
             },
             function (rxjs_1_1) {
                 rxjs_1 = rxjs_1_1;
+            },
+            function (SubscriptionService_1_1) {
+                SubscriptionService_1 = SubscriptionService_1_1;
             },
             function (MessagesService_1_1) {
                 MessagesService_1 = MessagesService_1_1;
@@ -28,10 +31,25 @@ System.register(['lodash', 'rxjs', '../services/MessagesService'], function(expo
                     enumerable: true,
                     configurable: true
                 });
+                SubscriptionsStore.prototype.subscribeToTopicByName = function (topicName) {
+                    return SubscriptionService_1.SubscriptionService.subscribeToTopicByName(this._client.session, topicName);
+                };
+                SubscriptionsStore.prototype.unsubscribeFromTopic = function (topic) {
+                    return SubscriptionService_1.SubscriptionService.unsubscribeFromTopic(this._client.session, topic);
+                };
                 SubscriptionsStore.prototype.addSubscribedTopic = function (topic) {
                     var subscribedTopicsArray = this.subscribedTopics.getValue();
-                    subscribedTopicsArray.push(topic);
+                    var matchedTopic = lodash_1.default.find(subscribedTopicsArray, function (datum) {
+                        return datum.topicId === topic.topicId;
+                    });
+                    if (matchedTopic) {
+                        lodash_1.default.extend(matchedTopic, lodash_1.default.omit(topic, 'messages'));
+                    }
+                    else {
+                        subscribedTopicsArray.push(topic);
+                    }
                     this.subscribedTopics.next(subscribedTopicsArray);
+                    return this.subscribedTopics;
                 };
                 SubscriptionsStore.prototype.removeSubscribedTopicById = function (topicId) {
                     var subscribedTopicsArray = this.subscribedTopics.getValue();
@@ -44,6 +62,7 @@ System.register(['lodash', 'rxjs', '../services/MessagesService'], function(expo
                         matchedTopic.messages.complete();
                     }
                     this.subscribedTopics.next(subscribedTopicsArray);
+                    return this.subscribedTopics;
                 };
                 SubscriptionsStore.prototype.getTopicForName = function (topicName) {
                     var subscribedTopicsArray = this.subscribedTopics.getValue();

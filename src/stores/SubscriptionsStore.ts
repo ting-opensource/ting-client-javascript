@@ -3,7 +3,9 @@ import {Observable, BehaviorSubject} from 'rxjs';
 
 import {TingClient} from '../TingClient';
 import {Topic} from '../models/Topic';
+import {Subscription} from '../models/Subscription';
 import {Message} from '../models/Message';
+import {SubscriptionService} from '../services/SubscriptionService';
 import {MessagesService} from '../services/MessagesService';
 
 export class SubscriptionsStore
@@ -21,14 +23,38 @@ export class SubscriptionsStore
         this._client = client;
     }
 
-    addSubscribedTopic(topic:Topic)
+    subscribeToTopicByName(topicName:string):Promise<Subscription>
     {
-        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
-        subscribedTopicsArray.push(topic);
-        this.subscribedTopics.next(subscribedTopicsArray);
+        return SubscriptionService.subscribeToTopicByName(this._client.session, topicName);
     }
 
-    removeSubscribedTopicById(topicId:string)
+    unsubscribeFromTopic(topic:Topic):Promise<Subscription>
+    {
+        return SubscriptionService.unsubscribeFromTopic(this._client.session, topic);
+    }
+
+    addSubscribedTopic(topic:Topic):BehaviorSubject<Array<Topic>>
+    {
+        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
+        {
+            return datum.topicId === topic.topicId;
+        });
+
+        if(matchedTopic)
+        {
+            _.extend(matchedTopic, _.omit(topic, 'messages'));
+        }
+        else
+        {
+            subscribedTopicsArray.push(topic);
+        }
+
+        this.subscribedTopics.next(subscribedTopicsArray);
+        return this.subscribedTopics;
+    }
+
+    removeSubscribedTopicById(topicId:string):BehaviorSubject<Array<Topic>>
     {
         let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
         let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
@@ -44,6 +70,7 @@ export class SubscriptionsStore
         }
 
         this.subscribedTopics.next(subscribedTopicsArray);
+        return this.subscribedTopics;
     }
 
     getTopicForName(topicName:string):Topic

@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 
 import {Session} from './models/Session';
 import {Topic} from './models/Topic';
+import {Subscription} from './models/Subscription';
 import {Message} from './models/Message';
 import {AuthenticationService} from './services/AuthenticationService';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
@@ -78,6 +79,16 @@ export class TingClient extends EventEmitter
     getSubscribedTopicByName(topicName:string):Topic
     {
         return this._subscriptionsStore.getTopicForName(topicName);
+    }
+
+    subscribeToTopicByName(topicName:string):Promise<Subscription>
+    {
+        return this._subscriptionsStore.subscribeToTopicByName(topicName);
+    }
+
+    unsubscribeFromTopic(topic:Topic):Promise<Subscription>
+    {
+        return this._subscriptionsStore.unsubscribeFromTopic(topic);
     }
 
     getMessageStreamForTopicName(topicName:string):Observable<Message[]>

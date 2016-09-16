@@ -80,6 +80,12 @@ System.register(['whatwg-fetch', 'eventemitter3', 'socket.io-client', './models/
                 TingClient.prototype.getSubscribedTopicByName = function (topicName) {
                     return this._subscriptionsStore.getTopicForName(topicName);
                 };
+                TingClient.prototype.subscribeToTopicByName = function (topicName) {
+                    return this._subscriptionsStore.subscribeToTopicByName(topicName);
+                };
+                TingClient.prototype.unsubscribeFromTopic = function (topic) {
+                    return this._subscriptionsStore.unsubscribeFromTopic(topic);
+                };
                 TingClient.prototype.getMessageStreamForTopicName = function (topicName) {
                     return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
                 };
