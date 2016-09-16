@@ -1,6 +1,6 @@
 import 'whatwg-fetch';
-import _ from 'lodash';
-import queryString from 'query-string';
+import * as _ from 'lodash';
+import * as queryString from 'query-string';
 
 import {Topic} from '../models/Topic';
 import {Session} from '../models/Session';

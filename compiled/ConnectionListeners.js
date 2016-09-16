@@ -1,7 +1,16 @@
-System.register(['./models/SocketConnectionEvents', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter'], function(exports_1, context_1) {
+(function (factory) {
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === 'function' && define.amd) {
+        define(["require", "exports", './models/SocketConnectionEvents', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter'], factory);
+    }
+})(function (require, exports) {
     "use strict";
-    var __moduleName = context_1 && context_1.id;
-    var SocketConnectionEvents_1, TingEvents_1, TopicAdapter_1, MessageAdapter_1;
+    var SocketConnectionEvents_1 = require('./models/SocketConnectionEvents');
+    var TingEvents_1 = require('./models/TingEvents');
+    var TopicAdapter_1 = require('./adapters/TopicAdapter');
+    var MessageAdapter_1 = require('./adapters/MessageAdapter');
     function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
         }
@@ -58,23 +67,6 @@ System.register(['./models/SocketConnectionEvents', './models/TingEvents', './ad
         socket.on(TingEvents_1.TingEvents.SUBSCRIPTION_OFF, onSubscriptionOff);
         socket.on(TingEvents_1.TingEvents.MESSAGE, onMessage);
     }
-    exports_1("onConnect", onConnect);
-    return {
-        setters:[
-            function (SocketConnectionEvents_1_1) {
-                SocketConnectionEvents_1 = SocketConnectionEvents_1_1;
-            },
-            function (TingEvents_1_1) {
-                TingEvents_1 = TingEvents_1_1;
-            },
-            function (TopicAdapter_1_1) {
-                TopicAdapter_1 = TopicAdapter_1_1;
-            },
-            function (MessageAdapter_1_1) {
-                MessageAdapter_1 = MessageAdapter_1_1;
-            }],
-        execute: function() {
-        }
-    }
+    exports.onConnect = onConnect;
 });
 //# sourceMappingURL=ConnectionListeners.js.map

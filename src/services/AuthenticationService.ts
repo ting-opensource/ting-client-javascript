@@ -1,5 +1,5 @@
 import 'whatwg-fetch';
-import _ from 'lodash';
+import * as _ from 'lodash';
 
 import {Session} from '../models/Session';
 

@@ -1,5 +1,5 @@
-import moment from 'moment';
-import _ from 'lodash';
+import * as moment from 'moment';
+import * as _ from 'lodash';
 import {BehaviorSubject} from 'rxjs';
 
 import {Message} from './Message';

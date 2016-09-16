@@ -1,8 +1,8 @@
 import 'whatwg-fetch';
 
-import _ from 'lodash';
-import EventEmitter from 'eventemitter3';
-import io from 'socket.io-client';
+import * as _ from 'lodash';
+import * as EventEmitter from 'eventemitter3';
+import * as io from 'socket.io-client';
 import {Observable} from 'rxjs';
 
 import {Session} from './models/Session';

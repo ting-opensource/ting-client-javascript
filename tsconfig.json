@@ -3,7 +3,7 @@
     "node_modules"
   ],
   "compilerOptions": {
-    "module": "system",
+    "module": "umd",
     "moduleResolution": "node",
     "target": "es5",
     "experimentalDecorators": true,

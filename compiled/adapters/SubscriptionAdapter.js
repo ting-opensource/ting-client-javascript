@@ -1,38 +1,29 @@
-System.register(['moment', 'lodash', '../models/Subscription', './TopicAdapter'], function(exports_1, context_1) {
-    "use strict";
-    var __moduleName = context_1 && context_1.id;
-    var moment_1, lodash_1, Subscription_1, TopicAdapter_1;
-    var SubscriptionAdapter;
-    return {
-        setters:[
-            function (moment_1_1) {
-                moment_1 = moment_1_1;
-            },
-            function (lodash_1_1) {
-                lodash_1 = lodash_1_1;
-            },
-            function (Subscription_1_1) {
-                Subscription_1 = Subscription_1_1;
-            },
-            function (TopicAdapter_1_1) {
-                TopicAdapter_1 = TopicAdapter_1_1;
-            }],
-        execute: function() {
-            SubscriptionAdapter = (function () {
-                function SubscriptionAdapter() {
-                }
-                SubscriptionAdapter.fromServerResponse = function (subscriptionData) {
-                    var subscription = new Subscription_1.Subscription(lodash_1.default.extend({}, subscriptionData, {
-                        topic: TopicAdapter_1.TopicAdapter.fromServerResponse(subscriptionData.topic),
-                        createdAt: subscriptionData.createdAt ? moment_1.default.utc(subscriptionData.createdAt) : null,
-                        updatedAt: subscriptionData.updatedAt ? moment_1.default.utc(subscriptionData.updatedAt) : null
-                    }));
-                    return subscription;
-                };
-                return SubscriptionAdapter;
-            }());
-            exports_1("SubscriptionAdapter", SubscriptionAdapter);
-        }
+(function (factory) {
+    if (typeof module === 'object' && typeof module.exports === 'object') {
+        var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
+    else if (typeof define === 'function' && define.amd) {
+        define(["require", "exports", 'moment', 'lodash', '../models/Subscription', './TopicAdapter'], factory);
+    }
+})(function (require, exports) {
+    "use strict";
+    var moment = require('moment');
+    var _ = require('lodash');
+    var Subscription_1 = require('../models/Subscription');
+    var TopicAdapter_1 = require('./TopicAdapter');
+    var SubscriptionAdapter = (function () {
+        function SubscriptionAdapter() {
+        }
+        SubscriptionAdapter.fromServerResponse = function (subscriptionData) {
+            var subscription = new Subscription_1.Subscription(_.extend({}, subscriptionData, {
+                topic: TopicAdapter_1.TopicAdapter.fromServerResponse(subscriptionData.topic),
+                createdAt: subscriptionData.createdAt ? moment.utc(subscriptionData.createdAt) : null,
+                updatedAt: subscriptionData.updatedAt ? moment.utc(subscriptionData.updatedAt) : null
+            }));
+            return subscription;
+        };
+        return SubscriptionAdapter;
+    }());
+    exports.SubscriptionAdapter = SubscriptionAdapter;
 });
 //# sourceMappingURL=SubscriptionAdapter.js.map

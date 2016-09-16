@@ -1,5 +1,3 @@
-import moment from 'moment/moment';
-
 import {MessageTypes} from './MessageTypes';
 import {IIncomingTopic, Topic} from './Topic';
 

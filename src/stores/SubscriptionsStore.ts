@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import * as _ from 'lodash';
 import {Observable, BehaviorSubject} from 'rxjs';
 
 import {TingClient} from '../TingClient';
