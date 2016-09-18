@@ -27,13 +27,17 @@ var __extends = (this && this.__extends) || function (d, b) {
     }());
     var TingClient = (function (_super) {
         __extends(TingClient, _super);
-        function TingClient(serviceBaseURL, userId) {
+        function TingClient(serviceBaseURL, userId, clientId, clientSecret) {
             _super.call(this);
             this._serviceBaseURL = '';
             this._userId = '';
+            this._clientId = '';
+            this._clientSecret = '';
             this._serviceBaseURL = serviceBaseURL;
             this._userId = userId;
-            this._session = new Session_1.Session(serviceBaseURL, userId);
+            this._clientId = clientId;
+            this._clientSecret = clientSecret;
+            this._session = new Session_1.Session(serviceBaseURL, userId, clientId, clientSecret);
             this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore(this);
         }
         Object.defineProperty(TingClient.prototype, "session", {

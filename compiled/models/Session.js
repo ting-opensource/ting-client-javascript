@@ -8,12 +8,16 @@
 })(function (require, exports) {
     "use strict";
     var Session = (function () {
-        function Session(serviceBaseURL, userId) {
+        function Session(serviceBaseURL, userId, clientId, clientSecret) {
             this._serviceBaseURL = '';
             this._userId = '';
+            this._clientId = '';
+            this._clientSecret = '';
             this._token = '';
             this._serviceBaseURL = serviceBaseURL;
             this._userId = userId;
+            this._clientId = clientId;
+            this._clientSecret = clientSecret;
         }
         Object.defineProperty(Session.prototype, "serviceBaseURL", {
             get: function () {
@@ -29,6 +33,20 @@
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(Session.prototype, "clientId", {
+            get: function () {
+                return this._clientId;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(Session.prototype, "clientSecret", {
+            get: function () {
+                return this._clientSecret;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(Session.prototype, "token", {
             get: function () {
                 return this._token;
@@ -36,6 +54,8 @@
             enumerable: true,
             configurable: true
         });
+        Session.prototype.getClientAuthorizationToken = function () {
+        };
         Session.prototype.isAuthenticated = function () {
             return this._token ? true : false;
         };

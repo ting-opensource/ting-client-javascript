@@ -1,7 +1,7 @@
 System.import('compiled:TingClient')
 .then(function({TingClient})
 {
-    let client = new TingClient('http://localhost:9999', 'TEST_SUBSCRIBER');
+    let client = new TingClient('http://localhost:9999', 'TEST_SUBSCRIBER', '__TEST_CLIENT_ID__', '__TEST_CLIENT_SECRET__');
     window.client = client;
 
     client.on('subscription-live', function(subscription)

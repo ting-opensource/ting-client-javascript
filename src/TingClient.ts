@@ -28,16 +28,20 @@ export class TingClient extends EventEmitter
 
     private _serviceBaseURL:string = '';
     private _userId:string = '';
+    private _clientId:string = '';
+    private _clientSecret:string = '';
 
     private _subscriptionsStore:SubscriptionsStore;
 
-    constructor(serviceBaseURL:string, userId:string)
+    constructor(serviceBaseURL:string, userId:string, clientId:string, clientSecret:string)
     {
         super();
         this._serviceBaseURL = serviceBaseURL;
         this._userId = userId;
+        this._clientId = clientId;
+        this._clientSecret = clientSecret;
 
-        this._session = new Session(serviceBaseURL, userId);
+        this._session = new Session(serviceBaseURL, userId, clientId, clientSecret);
 
         this._subscriptionsStore = new SubscriptionsStore(this);
     }
