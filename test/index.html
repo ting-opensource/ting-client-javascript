@@ -1,0 +1,67 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Ting Test Page</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <script src="../node_modules/es6-shim/es6-shim.min.js"></script>
+    <script src="../node_modules/systemjs/dist/system.js"></script>
+    <script>
+        System.config({
+            baseURL: './',
+            paths: {
+                'npm:': '../node_modules/',
+                'compiled:': '../compiled/'
+            },
+            map: {
+                'bluebird': 'npm:bluebird/js/browser/bluebird.core.js',
+                'eventemitter3': 'npm:eventemitter3/index.js',
+                'lodash': 'npm:lodash/',
+                'moment': 'npm:moment/min/moment.min.js',
+                'socket.io-client': 'npm:socket.io-client/socket.io.js',
+                'whatwg-fetch': 'npm:whatwg-fetch/fetch.js',
+                'rxjs': 'npm:rxjs/bundles/Rx.min.js',
+                'query-string': 'npm:query-string/index.js',
+                'strict-uri-encode': 'npm:strict-uri-encode/index.js',
+                'object-assign': 'npm:object-assign/index.js'
+            },
+            packages: {
+                'compiled:' : {
+                    defaultExtension: 'js'
+                },
+                'lodash': {
+                    main: './index.js',
+                    defaultExtension: 'js'
+                }
+            },
+            meta: {
+                '*.js': {
+                    babelOptions: {
+                        es2015: false
+                    }
+                },
+                'socket.io-client': {
+                    format: 'global'
+                }
+            }
+        })
+
+        System.import('./scripts/bootstraper.js')
+        .then(function()
+        {
+            console.info('Test Environment Ready!');
+        })
+        .catch(function(error)
+        {
+            debugger;
+        });
+    </script>
+</body>
+
+</html>
