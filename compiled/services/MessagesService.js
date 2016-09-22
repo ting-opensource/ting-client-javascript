@@ -3,24 +3,19 @@
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', 'lodash', 'query-string', '../adapters/MessageAdapter'], factory);
+        define(["require", "exports", 'whatwg-fetch', 'lodash', '../adapters/MessageAdapter'], factory);
     }
 })(function (require, exports) {
     "use strict";
     require('whatwg-fetch');
     var _ = require('lodash');
-    var queryString = require('query-string');
     var MessageAdapter_1 = require('../adapters/MessageAdapter');
+    var DEFAULT_PAGE_SIZE = 100;
     var MessagesService = (function () {
         function MessagesService() {
         }
         MessagesService.fetchMessagesForTopicSinceMessage = function (session, topic, message) {
-            var queryStringParams = {
-                topic: topic.name,
-                sinceMessageId: message.messageId,
-                pageSize: 100
-            };
-            var url = session.serviceBaseURL + "/messages?" + queryString.stringify(queryStringParams);
+            var url = session.serviceBaseURL + "/messages?topic=" + encodeURIComponent(topic.name) + "&sinceMessageId=" + encodeURIComponent(message.messageId) + "&pageSize=" + encodeURIComponent(DEFAULT_PAGE_SIZE.toString());
             return fetch(url, {
                 method: 'GET',
                 headers: {
@@ -44,12 +39,7 @@
             });
         };
         MessagesService.fetchMessagesForTopicTillMessage = function (session, topic, message) {
-            var queryStringParams = {
-                topic: topic.name,
-                tillMessageId: message.messageId,
-                pageSize: 100
-            };
-            var url = session.serviceBaseURL + "/messages?" + queryString.stringify(queryStringParams);
+            var url = session.serviceBaseURL + "/messages?topic=" + encodeURIComponent(topic.name) + "&tillMessageId=" + encodeURIComponent(message.messageId) + "&pageSize=" + encodeURIComponent(DEFAULT_PAGE_SIZE.toString());
             return fetch(url, {
                 method: 'GET',
                 headers: {
