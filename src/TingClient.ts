@@ -1,7 +1,7 @@
 import 'whatwg-fetch';
 
 import * as _ from 'lodash';
-import * as EventEmitter from 'eventemitter3';
+import * as EventEmitter from 'eventemitter2';
 import * as io from 'socket.io-client';
 import {Observable} from 'rxjs';
 
@@ -17,7 +17,7 @@ let _instance:TingClient = null;
 
 class SingletonEnforcer {}
 
-export class TingClient extends EventEmitter
+export class TingClient extends EventEmitter.EventEmitter2
 {
     private _transport:SocketIOClient.Socket;
     private _session:Session;

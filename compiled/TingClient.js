@@ -8,12 +8,12 @@ var __extends = (this && this.__extends) || function (d, b) {
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', 'eventemitter3', 'socket.io-client', './models/Session', './services/AuthenticationService', './stores/SubscriptionsStore', './ConnectionListeners'], factory);
+        define(["require", "exports", 'whatwg-fetch', 'eventemitter2', 'socket.io-client', './models/Session', './services/AuthenticationService', './stores/SubscriptionsStore', './ConnectionListeners'], factory);
     }
 })(function (require, exports) {
     "use strict";
     require('whatwg-fetch');
-    var EventEmitter = require('eventemitter3');
+    var EventEmitter = require('eventemitter2');
     var io = require('socket.io-client');
     var Session_1 = require('./models/Session');
     var AuthenticationService_1 = require('./services/AuthenticationService');
@@ -92,7 +92,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
         };
         return TingClient;
-    }(EventEmitter));
+    }(EventEmitter.EventEmitter2));
     exports.TingClient = TingClient;
 });
 //# sourceMappingURL=TingClient.js.map
