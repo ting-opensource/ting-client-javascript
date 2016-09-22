@@ -38,11 +38,6 @@ export class Session
         this._clientSecret = clientSecret;
     }
 
-    getClientAuthorizationToken():string
-    {
-
-    }
-
     isAuthenticated():boolean
     {
         return this._token ? true : false;

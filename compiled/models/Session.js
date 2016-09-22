@@ -54,8 +54,6 @@
             enumerable: true,
             configurable: true
         });
-        Session.prototype.getClientAuthorizationToken = function () {
-        };
         Session.prototype.isAuthenticated = function () {
             return this._token ? true : false;
         };
