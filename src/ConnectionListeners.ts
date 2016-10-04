@@ -5,6 +5,7 @@ import {IIncomingTopic, Topic} from './models/Topic';
 import {IIncomingSubscription, Subscription} from './models/Subscription';
 import {IIncomingMessage, Message} from './models/Message';
 import {SocketConnectionEvents} from './models/SocketConnectionEvents';
+import {ConnectionStatuses} from './models/ConnectionStatuses';
 import {TingEvents} from './models/TingEvents';
 import {TopicAdapter} from './adapters/TopicAdapter';
 import {SubscriptionAdapter} from './adapters/SubscriptionAdapter';
@@ -15,32 +16,32 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
 {
     function onError()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.ERRORED);
     }
 
     function onReconnectAttempt()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.CONNECTING);
     }
 
     function onReconnecting()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.CONNECTING);
     }
 
     function onReconnect()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.CONNECTED);
     }
 
     function onReconnectError()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.ERRORED);
     }
 
     function onReconnectFailed()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.ERRORED);
     }
 
     function onSubscriptionLive(topicData:IIncomingTopic)
@@ -93,7 +94,7 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
 
     function onDisconnect()
     {
-
+        clientFacade.__setConnectionStatus(ConnectionStatuses.DISCONNECTED);
     }
 
     socket.on(SocketConnectionEvents.ERROR, onError);
