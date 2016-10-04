@@ -1,6 +1,6 @@
 {
   "name": "ting-client-javascript",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Durable and Realtime Messaging System primarily geared towards Web Apps",
   "main": "compiled/index.js",
   "scripts": {
