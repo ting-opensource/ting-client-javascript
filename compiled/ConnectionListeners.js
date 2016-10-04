@@ -3,26 +3,33 @@
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './models/SocketConnectionEvents', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter'], factory);
+        define(["require", "exports", './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter'], factory);
     }
 })(function (require, exports) {
     "use strict";
     var SocketConnectionEvents_1 = require('./models/SocketConnectionEvents');
+    var ConnectionStatuses_1 = require('./models/ConnectionStatuses');
     var TingEvents_1 = require('./models/TingEvents');
     var TopicAdapter_1 = require('./adapters/TopicAdapter');
     var MessageAdapter_1 = require('./adapters/MessageAdapter');
     function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.ERRORED);
         }
         function onReconnectAttempt() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.CONNECTING);
         }
         function onReconnecting() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.CONNECTING);
         }
         function onReconnect() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.CONNECTED);
         }
         function onReconnectError() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.ERRORED);
         }
         function onReconnectFailed() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.ERRORED);
         }
         function onSubscriptionLive(topicData) {
             var topic = TopicAdapter_1.TopicAdapter.fromServerResponse(topicData);
@@ -55,6 +62,7 @@
             clientFacade.emit("message:" + message.topic.name, message);
         }
         function onDisconnect() {
+            clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.DISCONNECTED);
         }
         socket.on(SocketConnectionEvents_1.SocketConnectionEvents.ERROR, onError);
         socket.on(SocketConnectionEvents_1.SocketConnectionEvents.DISCONNECT, onDisconnect);

@@ -3,7 +3,7 @@ import 'whatwg-fetch';
 import * as _ from 'lodash';
 import * as EventEmitter from 'eventemitter2';
 import * as io from 'socket.io-client';
-import {Observable} from 'rxjs';
+import {Observable, BehaviorSubject} from 'rxjs';
 
 import {Session} from './models/Session';
 import {Topic} from './models/Topic';
@@ -13,17 +13,53 @@ import {AuthenticationService} from './services/AuthenticationService';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
 import {onConnect} from './ConnectionListeners';
 
+import {SocketConnectionEvents} from './models/SocketConnectionEvents';
+import {ConnectionStatuses} from './models/ConnectionStatuses';
+import {TingEvents} from './models/TingEvents';
+
 let _instance:TingClient = null;
 
 class SingletonEnforcer {}
 
 export class TingClient extends EventEmitter.EventEmitter2
 {
+    public static get ConnectionStatuses():ConnectionStatuses
+    {
+        return ConnectionStatuses;
+    }
+
+    public static get SocketConnectionEvents():SocketConnectionEvents
+    {
+        return SocketConnectionEvents;
+    }
+
+    public static get TingEvents():TingEvents
+    {
+        return TingEvents;
+    }
+
     private _transport:SocketIOClient.Socket;
+    get transport():SocketIOClient.Socket
+    {
+        return this._transport;
+    }
+
     private _session:Session;
     get session():Session
     {
         return this._session;
+    }
+
+    private _connectionStatus:BehaviorSubject<string> = new BehaviorSubject(ConnectionStatuses.DISCONNECTED);
+    get connectionStatus():BehaviorSubject<string>
+    {
+        return this._connectionStatus;
+    }
+
+    private _isConnected:BehaviorSubject<boolean> = new BehaviorSubject(false);
+    get isConnected():BehaviorSubject<boolean>
+    {
+        return this._isConnected;
     }
 
     private _serviceBaseURL:string = '';
@@ -46,8 +82,25 @@ export class TingClient extends EventEmitter.EventEmitter2
         this._subscriptionsStore = new SubscriptionsStore(this);
     }
 
-    connect():Promise<SocketIOClient.Socket>
+    // Protected Method. Should not be called from public interface
+    public __setConnectionStatus(latestConnectionStatus:string):void
     {
+        this._connectionStatus.next(latestConnectionStatus);
+
+        if(latestConnectionStatus === ConnectionStatuses.CONNECTED)
+        {
+            this._isConnected.next(true);
+        }
+        else
+        {
+            this._isConnected.next(false);
+        }
+    }
+
+    public connect():Promise<SocketIOClient.Socket>
+    {
+        this.__setConnectionStatus(ConnectionStatuses.CONNECTING);
+
         return AuthenticationService.authenticateSession(this._session)
         .then((session:Session) =>
         {
@@ -58,59 +111,68 @@ export class TingClient extends EventEmitter.EventEmitter2
                     query: `token=${session.token}`
                 });
 
-                this._transport.on('connect', () =>
+                let onSocketConnect:Function = () =>
                 {
                     onConnect(this._transport, this, this._subscriptionsStore);
 
-                    resolve(this._transport);
-                });
+                    this._transport.off(SocketConnectionEvents.ERROR, onSocketConnectError);
+                    this.__setConnectionStatus(ConnectionStatuses.CONNECTED);
 
-                this._transport.once('error', (error) =>
+                    resolve(this._transport);
+                };
+
+                let onSocketConnectError:Function = (error) =>
                 {
+                    this._transport.off(SocketConnectionEvents.CONNECT, onSocketConnect);
+                    this.__setConnectionStatus(ConnectionStatuses.ERRORED);
+
                     reject(error);
-                });
+                };
+
+                this._transport.once(SocketConnectionEvents.CONNECT, onSocketConnect);
+                this._transport.once(SocketConnectionEvents.ERROR, onSocketConnectError);
             });
 
             return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
     }
 
-    getSubscribedTopics():Observable<Array<Topic>>
+    public getSubscribedTopics():Observable<Array<Topic>>
     {
         return this._subscriptionsStore.subscribedTopics;
     }
 
-    getSubscribedTopicByName(topicName:string):Topic
+    public getSubscribedTopicByName(topicName:string):Topic
     {
         return this._subscriptionsStore.getTopicForName(topicName);
     }
 
-    subscribeToTopicByName(topicName:string):Promise<Subscription>
+    public subscribeToTopicByName(topicName:string):Promise<Subscription>
     {
         return this._subscriptionsStore.subscribeToTopicByName(topicName);
     }
 
-    unsubscribeFromTopic(topic:Topic):Promise<Subscription>
+    public unsubscribeFromTopic(topic:Topic):Promise<Subscription>
     {
         return this._subscriptionsStore.unsubscribeFromTopic(topic);
     }
 
-    getMessageStreamForTopicName(topicName:string):Observable<Message[]>
+    public getMessageStreamForTopicName(topicName:string):Observable<Message[]>
     {
         return this._subscriptionsStore.getMessageStreamForTopicName(topicName);
     }
 
-    getMessageStreamForTopic(topic:Topic):Observable<Message[]>
+    public getMessageStreamForTopic(topic:Topic):Observable<Message[]>
     {
         return this._subscriptionsStore.getMessageStreamForTopic(topic);
     }
 
-    fetchMessagesForTopicSinceMessage(topic:Topic, sinceMessage:Message):Promise<Array<Message>>
+    public fetchMessagesForTopicSinceMessage(topic:Topic, sinceMessage:Message):Promise<Array<Message>>
     {
         return this._subscriptionsStore.fetchMessagesForTopicSinceMessage(topic, sinceMessage);
     }
 
-    fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
+    public fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
     {
         return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
     }

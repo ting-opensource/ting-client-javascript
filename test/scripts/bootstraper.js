@@ -1,8 +1,12 @@
 System.import('compiled:TingClient')
 .then(function({TingClient})
 {
-    let client = new TingClient('http://localhost:9999', 'TEST_SUBSCRIBER', '__TEST_CLIENT_ID__', '__TEST_CLIENT_SECRET__');
+    let client = new TingClient('http://localhost:6007', 'TEST_SUBSCRIBER', '__TEST_CLIENT_ID__', '__TEST_CLIENT_SECRET__');
     window.client = client;
+
+    console.log(TingClient.ConnectionStatuses);
+    console.log(TingClient.SocketConnectionEvents);
+    console.log(TingClient.TingEvents);
 
     client.on('subscription-live', function(subscription)
     {
@@ -32,6 +36,23 @@ System.import('compiled:TingClient')
     {
         console.info('message:other-test-topic');
         console.info(message);
+    });
+
+    client.connectionStatus.subscribe(function(connectionStatus)
+    {
+        console.log('Connection Status: ', connectionStatus);
+    });
+
+    client.isConnected.subscribe(function(isConnected)
+    {
+        if(isConnected)
+        {
+            console.info('Client is Connected');
+        }
+        else
+        {
+            console.warn('Client is NOT Connected');
+        }
     });
 
     client.connect()
