@@ -10,6 +10,7 @@ import {Topic} from './models/Topic';
 import {Subscription} from './models/Subscription';
 import {Message} from './models/Message';
 import {AuthenticationService} from './services/AuthenticationService';
+import {MessagesService} from './services/MessagesService';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
 import {onConnect} from './ConnectionListeners';
 
@@ -175,5 +176,10 @@ export class TingClient extends EventEmitter.EventEmitter2
     public fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
     {
         return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
+    }
+
+    public publishMessage(topicName:string, messageBody:string, messageType:string):Promise<Message>
+    {
+        return MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
     }
 }

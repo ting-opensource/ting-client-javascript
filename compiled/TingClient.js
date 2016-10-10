@@ -8,7 +8,7 @@ var __extends = (this && this.__extends) || function (d, b) {
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', 'eventemitter2', 'socket.io-client', 'rxjs', './models/Session', './services/AuthenticationService', './stores/SubscriptionsStore', './ConnectionListeners', './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents'], factory);
+        define(["require", "exports", 'whatwg-fetch', 'eventemitter2', 'socket.io-client', 'rxjs', './models/Session', './services/AuthenticationService', './services/MessagesService', './stores/SubscriptionsStore', './ConnectionListeners', './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents'], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -18,6 +18,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     var rxjs_1 = require('rxjs');
     var Session_1 = require('./models/Session');
     var AuthenticationService_1 = require('./services/AuthenticationService');
+    var MessagesService_1 = require('./services/MessagesService');
     var SubscriptionsStore_1 = require('./stores/SubscriptionsStore');
     var ConnectionListeners_1 = require('./ConnectionListeners');
     var SocketConnectionEvents_1 = require('./models/SocketConnectionEvents');
@@ -155,6 +156,9 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         TingClient.prototype.fetchMessagesForTopicTillMessage = function (topic, tillMessage) {
             return this._subscriptionsStore.fetchMessagesForTopicTillMessage(topic, tillMessage);
+        };
+        TingClient.prototype.publishMessage = function (topicName, messageBody, messageType) {
+            return MessagesService_1.MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
         };
         return TingClient;
     }(EventEmitter.EventEmitter2));
