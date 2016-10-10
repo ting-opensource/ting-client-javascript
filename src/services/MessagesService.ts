@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import {Topic} from '../models/Topic';
 import {Session} from '../models/Session';
 import {IIncomingMessage, Message} from '../models/Message';
+import {MessageTypes} from '../models/MessageTypes';
 import {MessageAdapter} from '../adapters/MessageAdapter';
 
 const DEFAULT_PAGE_SIZE:number = 100;
@@ -71,6 +72,45 @@ export class MessagesService
             {
                 return MessageAdapter.fromServerResponse(datum);
             });
+        });
+    }
+
+    static publishMessage(session:Session, topicName:string, messageBody:string, messageType:string = MessageTypes.TEXT):Promise<Message>
+    {
+        let url:string = `${session.serviceBaseURL}/messages/publish`;
+
+        return fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.token}`
+            },
+            body: JSON.stringify({
+                topic: {
+                    name: topicName,
+                    createIfNotExist: true
+                },
+                message: {
+                    type: messageType,
+                    body: messageBody
+                }
+            })
+        })
+        .then((response:any) =>
+        {
+            if(response.ok)
+            {
+                return response.json();
+            }
+            else
+            {
+                let error = new Error(response.statusText);
+                throw error;
+            }
+        })
+        .then((response:IIncomingMessage) =>
+        {
+            return MessageAdapter.fromServerResponse(response);
         });
     }
 }

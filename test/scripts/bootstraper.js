@@ -89,6 +89,8 @@ System.import('compiled:TingClient')
             let testTopic = client.getSubscribedTopicByName('test-topic');
             let messages = client.getMessageStreamForTopic(testTopic).getValue();
             client.fetchMessagesForTopicSinceMessage(testTopic, messages[messages.length - 1]);
+
+            client.publishMessage('test-topic', 'test-message', 'text/plain');
         }, 3000);
     })
     .catch(function(error)
