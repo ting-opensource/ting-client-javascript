@@ -3,7 +3,7 @@
         var v = factory(require, exports); if (v !== undefined) module.exports = v;
     }
     else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter'], factory);
+        define(["require", "exports", './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter', './adapters/ReadReceiptAdapter'], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,6 +12,7 @@
     var TingEvents_1 = require('./models/TingEvents');
     var TopicAdapter_1 = require('./adapters/TopicAdapter');
     var MessageAdapter_1 = require('./adapters/MessageAdapter');
+    var ReadReceiptAdapter_1 = require('./adapters/ReadReceiptAdapter');
     function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
             clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.ERRORED);
@@ -61,6 +62,16 @@
             clientFacade.emit('message', message);
             clientFacade.emit("message:" + message.topic.name, message);
         }
+        function onMessageRead(data) {
+            var topicName = data.topic.name;
+            var matchedTopic = subscriptionsStore.getTopicForName(topicName);
+            if (matchedTopic) {
+                var readReceipt = ReadReceiptAdapter_1.ReadReceiptAdapter.fromServerResponse(data.readReceipt);
+                matchedTopic.markAMessageAsRead(readReceipt);
+                clientFacade.emit('message-read', matchedTopic, readReceipt);
+                clientFacade.emit("message-read:" + matchedTopic.name, readReceipt);
+            }
+        }
         function onDisconnect() {
             clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.DISCONNECTED);
         }
@@ -74,6 +85,7 @@
         socket.on(TingEvents_1.TingEvents.SUBSCRIPTION_LIVE, onSubscriptionLive);
         socket.on(TingEvents_1.TingEvents.SUBSCRIPTION_OFF, onSubscriptionOff);
         socket.on(TingEvents_1.TingEvents.MESSAGE, onMessage);
+        socket.on(TingEvents_1.TingEvents.MESSAGE_READ, onMessageRead);
     }
     exports.onConnect = onConnect;
 });

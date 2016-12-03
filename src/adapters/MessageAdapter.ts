@@ -11,7 +11,8 @@ export class MessageAdapter
         let message:Message = new Message(<IIncomingMessage> _.extend({}, messageData, {
             topic: TopicAdapter.fromServerResponse(messageData.topic),
             createdAt: messageData.createdAt ? moment.utc(messageData.createdAt) : null,
-            updatedAt: messageData.updatedAt ? moment.utc(messageData.updatedAt) : null
+            updatedAt: messageData.updatedAt ? moment.utc(messageData.updatedAt) : null,
+            readOn: messageData.readOn ? moment.utc(messageData.updatedAt) : null,
         }));
 
         return message;

@@ -31,6 +31,13 @@
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(TingEvents, "MESSAGE_READ", {
+            get: function () {
+                return 'message-read';
+            },
+            enumerable: true,
+            configurable: true
+        });
         return TingEvents;
     }());
     exports.TingEvents = TingEvents;

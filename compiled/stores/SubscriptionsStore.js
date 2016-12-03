@@ -90,6 +90,24 @@
                 return messages;
             });
         };
+        SubscriptionsStore.prototype.markAMessageAsRead = function (message) {
+            return MessagesService_1.MessagesService.markAMessageAsRead(this._client.session, message)
+                .then(function (readReceipt) {
+                return message.topic.markAMessageAsRead(readReceipt);
+            });
+        };
+        SubscriptionsStore.prototype.markMessagesSinceAMessageAsRead = function (sinceMessage) {
+            return MessagesService_1.MessagesService.markMessagesSinceAMessageAsRead(this._client.session, sinceMessage)
+                .then(function (readReceipts) {
+                return sinceMessage.topic.markMessagesAsRead(readReceipts);
+            });
+        };
+        SubscriptionsStore.prototype.markMessagesTillAMessageAsRead = function (tillMessage) {
+            return MessagesService_1.MessagesService.markMessagesTillAMessageAsRead(this._client.session, tillMessage)
+                .then(function (readReceipts) {
+                return tillMessage.topic.markMessagesAsRead(readReceipts);
+            });
+        };
         return SubscriptionsStore;
     }());
     exports.SubscriptionsStore = SubscriptionsStore;

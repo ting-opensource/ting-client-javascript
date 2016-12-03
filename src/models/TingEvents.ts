@@ -14,4 +14,9 @@ export class TingEvents
     {
         return 'message';
     }
+
+    static get MESSAGE_READ():string
+    {
+        return 'message-read';
+    }
 }

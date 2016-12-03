@@ -160,6 +160,15 @@ var __extends = (this && this.__extends) || function (d, b) {
         TingClient.prototype.publishMessage = function (topicName, messageBody, messageType) {
             return MessagesService_1.MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
         };
+        TingClient.prototype.markAMessageAsRead = function (message) {
+            return this._subscriptionsStore.markAMessageAsRead(message);
+        };
+        TingClient.prototype.markMessagesTillAMessageAsRead = function (tillMessage) {
+            return this._subscriptionsStore.markMessagesTillAMessageAsRead(tillMessage);
+        };
+        TingClient.prototype.markMessagesSinceAMessageAsRead = function (sinceMessage) {
+            return this._subscriptionsStore.markMessagesSinceAMessageAsRead(sinceMessage);
+        };
         return TingClient;
     }(EventEmitter.EventEmitter2));
     exports.TingClient = TingClient;

@@ -18,10 +18,19 @@
             this.createdAt = null;
             this.updatedBy = '';
             this.updatedAt = null;
+            this.subscriber = '';
+            this.readOn = null;
             for (var key in data) {
                 this[key] = data[key];
             }
         }
+        Object.defineProperty(Message.prototype, "isRead", {
+            get: function () {
+                return this.readOn === null ? false : true;
+            },
+            enumerable: true,
+            configurable: true
+        });
         return Message;
     }());
     exports.Message = Message;

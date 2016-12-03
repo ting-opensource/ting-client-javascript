@@ -1,5 +1,6 @@
 'use strict';
 
+import {Moment} from 'moment';
 import {IIncomingTopic, Topic} from './Topic';
 
 export interface IIncomingSubscription
@@ -9,8 +10,8 @@ export interface IIncomingSubscription
     subscriber:string;
     isDurable:boolean;
     isActive:boolean;
-    createdAt?:moment.MomentStatic;
-    updatedAt?:moment.MomentStatic;
+    createdAt?:Moment;
+    updatedAt?:Moment;
 }
 
 export class Subscription 
@@ -20,8 +21,8 @@ export class Subscription
     subscriber:string = '';
     isDurable:boolean = false;
     isActive:boolean = false;
-    createdAt:moment.MomentStatic = null;
-    updatedAt:moment.MomentStatic = null;
+    createdAt:Moment = null;
+    updatedAt:Moment = null;
 
     constructor(data:IIncomingSubscription)
     {
