@@ -182,4 +182,19 @@ export class TingClient extends EventEmitter.EventEmitter2
     {
         return MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
     }
+
+    public markAMessageAsRead(message:Message):Promise<Observable<Array<Message>>>
+    {
+        return this._subscriptionsStore.markAMessageAsRead(message);
+    }
+
+    public markMessagesTillAMessageAsRead(tillMessage:Message):Promise<Observable<Array<Message>>>
+    {
+        return this._subscriptionsStore.markMessagesTillAMessageAsRead(tillMessage);
+    }
+
+    public markMessagesSinceAMessageAsRead(sinceMessage:Message):Promise<Observable<Array<Message>>>
+    {
+        return this._subscriptionsStore.markMessagesSinceAMessageAsRead(sinceMessage);
+    }
 }

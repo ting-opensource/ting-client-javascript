@@ -1,12 +1,11 @@
 System.import('compiled:TingClient')
 .then(function({TingClient})
 {
-    let client = new TingClient('http://localhost:6007', 'TEST_SUBSCRIBER', '__TEST_CLIENT_ID__', '__TEST_CLIENT_SECRET__');
+    let client = new TingClient('http://localhost:6012',
+                                'TEST_SUBSCRIBER',
+                                '__TING_CLIENT_ID_FOR_DEV__',
+                                '__TING_CLIENT_SECRET_FOR_DEV__');
     window.client = client;
-
-    console.log(TingClient.ConnectionStatuses);
-    console.log(TingClient.SocketConnectionEvents);
-    console.log(TingClient.TingEvents);
 
     client.on('subscription-live', function(subscription)
     {
@@ -90,7 +89,16 @@ System.import('compiled:TingClient')
             let messages = client.getMessageStreamForTopic(testTopic).getValue();
             client.fetchMessagesForTopicSinceMessage(testTopic, messages[messages.length - 1]);
 
-            client.publishMessage('test-topic', 'test-message', 'text/plain');
+            testTopic.unreadMessagesCount.subscribe((unreadMessagesCount) =>
+            {
+                console.warn('Unread messages count updated on test-topic to ', unreadMessagesCount);
+            });
+
+            client.publishMessage('test-topic', 'test-message', 'text/plain')
+            .then((updatedMessage) =>
+            {
+                client.markAMessageAsRead(updatedMessage);
+            });
         }, 3000);
     })
     .catch(function(error)

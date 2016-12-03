@@ -18,7 +18,8 @@
             var message = new Message_1.Message(_.extend({}, messageData, {
                 topic: TopicAdapter_1.TopicAdapter.fromServerResponse(messageData.topic),
                 createdAt: messageData.createdAt ? moment.utc(messageData.createdAt) : null,
-                updatedAt: messageData.updatedAt ? moment.utc(messageData.updatedAt) : null
+                updatedAt: messageData.updatedAt ? moment.utc(messageData.updatedAt) : null,
+                readOn: messageData.readOn ? moment.utc(messageData.updatedAt) : null,
             }));
             return message;
         };

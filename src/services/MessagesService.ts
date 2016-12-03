@@ -4,8 +4,10 @@ import * as _ from 'lodash';
 import {Topic} from '../models/Topic';
 import {Session} from '../models/Session';
 import {IIncomingMessage, Message} from '../models/Message';
+import {IIncomingReadReceipt, ReadReceipt} from '../models/ReadReceipt';
 import {MessageTypes} from '../models/MessageTypes';
 import {MessageAdapter} from '../adapters/MessageAdapter';
+import {ReadReceiptAdapter} from '../adapters/ReadReceiptAdapter';
 
 const DEFAULT_PAGE_SIZE:number = 100;
 
@@ -111,6 +113,99 @@ export class MessagesService
         .then((response:IIncomingMessage) =>
         {
             return MessageAdapter.fromServerResponse(response);
+        });
+    }
+
+    static markAMessageAsRead(session:Session, message:Message):Promise<ReadReceipt>
+    {
+        let url:string = `${session.serviceBaseURL}/messages/${message.messageId}/read`;
+
+        return fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.token}`
+            }
+        })
+        .then((response:any) =>
+        {
+            if(response.ok)
+            {
+                return response.json();
+            }
+            else
+            {
+                let error = new Error(response.statusText);
+                throw error;
+            }
+        })
+        .then((response:IIncomingReadReceipt) =>
+        {
+            return ReadReceiptAdapter.fromServerResponse(response);
+        });
+    }
+
+    static markMessagesSinceAMessageAsRead(session:Session, sinceMessage:Message):Promise<Array<ReadReceipt>>
+    {
+        let url:string = `${session.serviceBaseURL}/messages/since/${sinceMessage.messageId}/read`;
+
+        return fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.token}`
+            }
+        })
+        .then((response:any) =>
+        {
+            if(response.ok)
+            {
+                return response.json();
+            }
+            else
+            {
+                let error = new Error(response.statusText);
+                throw error;
+            }
+        })
+        .then((response:Array<IIncomingReadReceipt>) =>
+        {
+            return _.map(response, (datum:IIncomingReadReceipt) =>
+            {
+                return ReadReceiptAdapter.fromServerResponse(datum);
+            });
+        });
+    }
+
+    static markMessagesTillAMessageAsRead(session:Session, tillMessage:Message):Promise<Array<ReadReceipt>>
+    {
+        let url:string = `${session.serviceBaseURL}/messages/till/${tillMessage.messageId}/read`;
+
+        return fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.token}`
+            }
+        })
+        .then((response:any) =>
+        {
+            if(response.ok)
+            {
+                return response.json();
+            }
+            else
+            {
+                let error = new Error(response.statusText);
+                throw error;
+            }
+        })
+        .then((response:Array<IIncomingReadReceipt>) =>
+        {
+            return _.map(response, (datum:IIncomingReadReceipt) =>
+            {
+                return ReadReceiptAdapter.fromServerResponse(datum);
+            });
         });
     }
 }

@@ -1,3 +1,4 @@
+import {Moment} from 'moment';
 import {MessageTypes} from './MessageTypes';
 import {IIncomingTopic, Topic} from './Topic';
 
@@ -10,6 +11,8 @@ export interface IIncomingMessage
     body:string;
     createdAt:string;
     updatedAt:string;
+    subscriber:string;
+    readOn:Moment;
 }
 
 export class Message
@@ -19,9 +22,11 @@ export class Message
     publisher:string = '';
     type:string = MessageTypes.TEXT;
     body:Object|string = '';
-    createdAt:moment.MomentStatic = null;
+    createdAt:Moment = null;
     updatedBy:string = '';
-    updatedAt:moment.MomentStatic = null;
+    updatedAt:Moment = null;
+    subscriber:string = '';
+    readOn:Moment = null;
 
     constructor(data:IIncomingMessage)
     {
@@ -29,5 +34,10 @@ export class Message
         {
             this[key] = data[key];
         }
+    }
+
+    get isRead()
+    {
+        return this.readOn === null ? false : true;
     }
 }

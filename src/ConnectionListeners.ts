@@ -4,12 +4,14 @@ import {TingClient} from './TingClient';
 import {IIncomingTopic, Topic} from './models/Topic';
 import {IIncomingSubscription, Subscription} from './models/Subscription';
 import {IIncomingMessage, Message} from './models/Message';
+import {IIncomingReadReceipt, ReadReceipt} from './models/ReadReceipt';
 import {SocketConnectionEvents} from './models/SocketConnectionEvents';
 import {ConnectionStatuses} from './models/ConnectionStatuses';
 import {TingEvents} from './models/TingEvents';
 import {TopicAdapter} from './adapters/TopicAdapter';
 import {SubscriptionAdapter} from './adapters/SubscriptionAdapter';
 import {MessageAdapter} from './adapters/MessageAdapter';
+import {ReadReceiptAdapter} from './adapters/ReadReceiptAdapter';
 import {SubscriptionsStore} from './stores/SubscriptionsStore';
 
 export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient, subscriptionsStore:SubscriptionsStore)
@@ -92,6 +94,25 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
         clientFacade.emit(`message:${message.topic.name}`, message);
     }
 
+    function onMessageRead(data:{
+        topic:IIncomingTopic,
+        readReceipt:IIncomingReadReceipt
+    })
+    {
+        let topicName:string = data.topic.name;
+
+        let matchedTopic:Topic = subscriptionsStore.getTopicForName(topicName)
+
+        if(matchedTopic)
+        {
+            let readReceipt:ReadReceipt = ReadReceiptAdapter.fromServerResponse(data.readReceipt);
+            matchedTopic.markAMessageAsRead(readReceipt);
+
+            clientFacade.emit('message-read', matchedTopic, readReceipt);
+            clientFacade.emit(`message-read:${matchedTopic.name}`, readReceipt);
+        }
+    }
+
     function onDisconnect()
     {
         clientFacade.__setConnectionStatus(ConnectionStatuses.DISCONNECTED);
@@ -109,4 +130,5 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
     socket.on(TingEvents.SUBSCRIPTION_LIVE, onSubscriptionLive);
     socket.on(TingEvents.SUBSCRIPTION_OFF, onSubscriptionOff);
     socket.on(TingEvents.MESSAGE, onMessage);
+    socket.on(TingEvents.MESSAGE_READ, onMessageRead);
 }

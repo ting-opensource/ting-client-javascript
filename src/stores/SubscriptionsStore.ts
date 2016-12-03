@@ -5,6 +5,7 @@ import {TingClient} from '../TingClient';
 import {Topic} from '../models/Topic';
 import {Subscription} from '../models/Subscription';
 import {Message} from '../models/Message';
+import {ReadReceipt} from '../models/ReadReceipt';
 import {SubscriptionService} from '../services/SubscriptionService';
 import {MessagesService} from '../services/MessagesService';
 
@@ -120,6 +121,33 @@ export class SubscriptionsStore
         {
             topic.mergeMessages(messages);
             return messages;
+        });
+    }
+
+    markAMessageAsRead(message:Message):Promise<Observable<Array<Message>>>
+    {
+        return MessagesService.markAMessageAsRead(this._client.session, message)
+        .then((readReceipt:ReadReceipt) =>
+        {
+            return message.topic.markAMessageAsRead(readReceipt);
+        });
+    }
+
+    markMessagesSinceAMessageAsRead(sinceMessage:Message):Promise<Observable<Array<Message>>>
+    {
+        return MessagesService.markMessagesSinceAMessageAsRead(this._client.session, sinceMessage)
+        .then((readReceipts:Array<ReadReceipt>) =>
+        {
+            return sinceMessage.topic.markMessagesAsRead(readReceipts);
+        });
+    }
+
+    markMessagesTillAMessageAsRead(tillMessage:Message):Promise<Observable<Array<Message>>>
+    {
+        return MessagesService.markMessagesTillAMessageAsRead(this._client.session, tillMessage)
+        .then((readReceipts:Array<ReadReceipt>) =>
+        {
+            return tillMessage.topic.markMessagesAsRead(readReceipts);
         });
     }
 }
