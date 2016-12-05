@@ -1,6 +1,6 @@
 import {Moment} from 'moment';
 import * as _ from 'lodash';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 
 import {Message} from './Message';
 import {ReadReceipt} from './ReadReceipt';
@@ -27,7 +27,9 @@ export class Topic
     createdAt:Moment = null;
     updatedBy:string = '';
     updatedAt:Moment = null;
-    
+
+    private _unreadCountSubscription:Subscription = null;
+
     private _messages:BehaviorSubject<Array<Message>> = new BehaviorSubject<Array<Message>>([]);
     get messages():BehaviorSubject<Array<Message>>
     {
@@ -47,7 +49,7 @@ export class Topic
             this[key] = data[key];
         }
 
-        this._messages.subscribe((messages:Array<Message>) =>
+        this._unreadCountSubscription = this._messages.subscribe((messages:Array<Message>) =>
         {
             let unreadMessages = _.chain(messages).filter((datum:Message) =>
             {
@@ -67,7 +69,7 @@ export class Topic
     {
         let existingMesssages:Array<Message> = this.messages.getValue();
         let mergedMessages:Array<Message> = _.unionBy(incomingMessages, existingMesssages, 'messageId');
-        
+
         mergedMessages = _.sortBy(mergedMessages, (datum:Message) =>
         {
             return -(datum.updatedAt.valueOf());
@@ -93,7 +95,7 @@ export class Topic
         });
 
         let messageIdsInReadReceipts:Array<string> = _.keys(readReceiptsKeyedByMessageId);
-        
+
         _.forEach(existingMesssages, (datum:Message) =>
         {
             if(_.indexOf(messageIdsInReadReceipts, datum.messageId) > -1)
@@ -101,9 +103,17 @@ export class Topic
                 _.extend(datum, readReceiptsKeyedByMessageId[datum.messageId]);
             }
         });
-        
+
         this.messages.next(existingMesssages);
 
         return this.messages;
+    }
+
+    reset():void
+    {
+        this._unreadCountSubscription.unsubscribe();
+
+        this.messages.next([]);
+        this.unreadMessagesCount.next(0);
     }
 }

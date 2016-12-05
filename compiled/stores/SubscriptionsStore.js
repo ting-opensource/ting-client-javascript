@@ -108,6 +108,12 @@
                 return tillMessage.topic.markMessagesAsRead(readReceipts);
             });
         };
+        SubscriptionsStore.prototype.reset = function () {
+            _.forEach(this.subscribedTopics.getValue(), function (datum) {
+                datum.reset();
+            });
+            this.subscribedTopics.next([]);
+        };
         return SubscriptionsStore;
     }());
     exports.SubscriptionsStore = SubscriptionsStore;

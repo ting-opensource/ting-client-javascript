@@ -138,6 +138,12 @@ export class TingClient extends EventEmitter.EventEmitter2
         });
     }
 
+    public disconnect():void
+    {
+        this.transport.disconnect();
+        this._subscriptionsStore.reset();
+    }
+
     public getSubscribedTopics():Observable<Array<Topic>>
     {
         return this._subscriptionsStore.subscribedTopics;

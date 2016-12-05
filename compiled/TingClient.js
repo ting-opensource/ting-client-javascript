@@ -133,6 +133,10 @@ var __extends = (this && this.__extends) || function (d, b) {
                 return liveConnectionPromise;
             });
         };
+        TingClient.prototype.disconnect = function () {
+            this.transport.disconnect();
+            this._subscriptionsStore.reset();
+        };
         TingClient.prototype.getSubscribedTopics = function () {
             return this._subscriptionsStore.subscribedTopics;
         };
