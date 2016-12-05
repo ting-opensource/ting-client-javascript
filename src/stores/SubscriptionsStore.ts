@@ -150,4 +150,14 @@ export class SubscriptionsStore
             return tillMessage.topic.markMessagesAsRead(readReceipts);
         });
     }
+
+    reset():void
+    {
+        _.forEach(this.subscribedTopics.getValue(), (datum:Topic) =>
+        {
+            datum.reset();
+        });
+
+        this.subscribedTopics.next([]);
+    }
 }

@@ -20,12 +20,13 @@
             this.createdAt = null;
             this.updatedBy = '';
             this.updatedAt = null;
+            this._unreadCountSubscription = null;
             this._messages = new rxjs_1.BehaviorSubject([]);
             this._unreadMessagesCount = new rxjs_1.BehaviorSubject(-1);
             for (var key in data) {
                 this[key] = data[key];
             }
-            this._messages.subscribe(function (messages) {
+            this._unreadCountSubscription = this._messages.subscribe(function (messages) {
                 var unreadMessages = _.chain(messages).filter(function (datum) {
                     return !datum.isRead;
                 }).value();
@@ -74,6 +75,11 @@
             });
             this.messages.next(existingMesssages);
             return this.messages;
+        };
+        Topic.prototype.reset = function () {
+            this._unreadCountSubscription.unsubscribe();
+            this.messages.next([]);
+            this.unreadMessagesCount.next(0);
         };
         return Topic;
     }());
