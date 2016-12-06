@@ -68,6 +68,7 @@ export class TingClient extends EventEmitter.EventEmitter2
     private _clientId:string = '';
     private _clientSecret:string = '';
 
+    private _manualConnectionPromise = null;
     private _subscriptionsStore:SubscriptionsStore;
 
     constructor(serviceBaseURL:string, userId:string, clientId:string, clientSecret:string)
@@ -100,6 +101,18 @@ export class TingClient extends EventEmitter.EventEmitter2
 
     public connect():Promise<SocketIOClient.Socket>
     {
+        if(this.connectionStatus.getValue() !== ConnectionStatuses.DISCONNECTED)
+        {
+            if(this._manualConnectionPromise)
+            {
+                return this._manualConnectionPromise;
+            }
+            else
+            {
+                return Promise.resolve(this._transport);
+            }
+        }
+
         this.__setConnectionStatus(ConnectionStatuses.CONNECTING);
 
         return AuthenticationService.authenticateSession(this._session)
@@ -134,6 +147,8 @@ export class TingClient extends EventEmitter.EventEmitter2
                 this._transport.once(SocketConnectionEvents.ERROR, onSocketConnectError);
             });
 
+            this._manualConnectionPromise = liveConnectionPromise;
+
             return <Promise<SocketIOClient.Socket>> liveConnectionPromise;
         });
     }
@@ -141,6 +156,7 @@ export class TingClient extends EventEmitter.EventEmitter2
     public disconnect():void
     {
         this.transport.disconnect();
+        this._manualConnectionPromise = null;
         this._subscriptionsStore.reset();
     }
 
