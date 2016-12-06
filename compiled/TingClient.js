@@ -40,6 +40,7 @@ var __extends = (this && this.__extends) || function (d, b) {
             this._userId = '';
             this._clientId = '';
             this._clientSecret = '';
+            this._manualConnectionPromise = null;
             this._serviceBaseURL = serviceBaseURL;
             this._userId = userId;
             this._clientId = clientId;
@@ -108,6 +109,14 @@ var __extends = (this && this.__extends) || function (d, b) {
         };
         TingClient.prototype.connect = function () {
             var _this = this;
+            if (this.connectionStatus.getValue() !== ConnectionStatuses_1.ConnectionStatuses.DISCONNECTED) {
+                if (this._manualConnectionPromise) {
+                    return this._manualConnectionPromise;
+                }
+                else {
+                    return Promise.resolve(this._transport);
+                }
+            }
             this.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.CONNECTING);
             return AuthenticationService_1.AuthenticationService.authenticateSession(this._session)
                 .then(function (session) {
@@ -130,11 +139,13 @@ var __extends = (this && this.__extends) || function (d, b) {
                     _this._transport.once(SocketConnectionEvents_1.SocketConnectionEvents.CONNECT, onSocketConnect);
                     _this._transport.once(SocketConnectionEvents_1.SocketConnectionEvents.ERROR, onSocketConnectError);
                 });
+                _this._manualConnectionPromise = liveConnectionPromise;
                 return liveConnectionPromise;
             });
         };
         TingClient.prototype.disconnect = function () {
             this.transport.disconnect();
+            this._manualConnectionPromise = null;
             this._subscriptionsStore.reset();
         };
         TingClient.prototype.getSubscribedTopics = function () {
