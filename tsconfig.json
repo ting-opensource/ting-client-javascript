@@ -3,15 +3,20 @@
     "node_modules"
   ],
   "compilerOptions": {
-    "module": "umd",
+    "rootDir": "src",
+    "outDir": "compiled",
+    "lib": [
+      "dom",
+      "es2015"
+    ],
     "moduleResolution": "node",
+    "module": "umd",
+    "sourceMap": true,
     "target": "es5",
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "removeComments": false,
-    "noImplicitAny": false,
-    "sourceMap": true,
-    "rootDir": "src",
-    "outDir": "compiled"
+    "removeComments": true,
+    "noImplicitAny": false
   }
 }

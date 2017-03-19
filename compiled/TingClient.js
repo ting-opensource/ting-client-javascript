@@ -1,29 +1,36 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', 'eventemitter2', 'socket.io-client', 'rxjs', './models/Session', './services/AuthenticationService', './services/MessagesService', './stores/SubscriptionsStore', './ConnectionListeners', './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "whatwg-fetch", "eventemitter2", "socket.io-client", "rxjs", "./models/Session", "./services/AuthenticationService", "./services/MessagesService", "./stores/SubscriptionsStore", "./ConnectionListeners", "./models/SocketConnectionEvents", "./models/ConnectionStatuses", "./models/TingEvents"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    require('whatwg-fetch');
-    var EventEmitter = require('eventemitter2');
-    var io = require('socket.io-client');
-    var rxjs_1 = require('rxjs');
-    var Session_1 = require('./models/Session');
-    var AuthenticationService_1 = require('./services/AuthenticationService');
-    var MessagesService_1 = require('./services/MessagesService');
-    var SubscriptionsStore_1 = require('./stores/SubscriptionsStore');
-    var ConnectionListeners_1 = require('./ConnectionListeners');
-    var SocketConnectionEvents_1 = require('./models/SocketConnectionEvents');
-    var ConnectionStatuses_1 = require('./models/ConnectionStatuses');
-    var TingEvents_1 = require('./models/TingEvents');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    require("whatwg-fetch");
+    var EventEmitter = require("eventemitter2");
+    var io = require("socket.io-client");
+    var rxjs_1 = require("rxjs");
+    var Session_1 = require("./models/Session");
+    var AuthenticationService_1 = require("./services/AuthenticationService");
+    var MessagesService_1 = require("./services/MessagesService");
+    var SubscriptionsStore_1 = require("./stores/SubscriptionsStore");
+    var ConnectionListeners_1 = require("./ConnectionListeners");
+    var SocketConnectionEvents_1 = require("./models/SocketConnectionEvents");
+    var ConnectionStatuses_1 = require("./models/ConnectionStatuses");
+    var TingEvents_1 = require("./models/TingEvents");
     var _instance = null;
     var SingletonEnforcer = (function () {
         function SingletonEnforcer() {
@@ -33,20 +40,21 @@ var __extends = (this && this.__extends) || function (d, b) {
     var TingClient = (function (_super) {
         __extends(TingClient, _super);
         function TingClient(serviceBaseURL, userId, clientId, clientSecret) {
-            _super.call(this);
-            this._connectionStatus = new rxjs_1.BehaviorSubject(ConnectionStatuses_1.ConnectionStatuses.DISCONNECTED);
-            this._isConnected = new rxjs_1.BehaviorSubject(false);
-            this._serviceBaseURL = '';
-            this._userId = '';
-            this._clientId = '';
-            this._clientSecret = '';
-            this._manualConnectionPromise = null;
-            this._serviceBaseURL = serviceBaseURL;
-            this._userId = userId;
-            this._clientId = clientId;
-            this._clientSecret = clientSecret;
-            this._session = new Session_1.Session(serviceBaseURL, userId, clientId, clientSecret);
-            this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore(this);
+            var _this = _super.call(this) || this;
+            _this._connectionStatus = new rxjs_1.BehaviorSubject(ConnectionStatuses_1.ConnectionStatuses.DISCONNECTED);
+            _this._isConnected = new rxjs_1.BehaviorSubject(false);
+            _this._serviceBaseURL = '';
+            _this._userId = '';
+            _this._clientId = '';
+            _this._clientSecret = '';
+            _this._manualConnectionPromise = null;
+            _this._serviceBaseURL = serviceBaseURL;
+            _this._userId = userId;
+            _this._clientId = clientId;
+            _this._clientSecret = clientSecret;
+            _this._session = new Session_1.Session(serviceBaseURL, userId, clientId, clientSecret);
+            _this._subscriptionsStore = new SubscriptionsStore_1.SubscriptionsStore(_this);
+            return _this;
         }
         Object.defineProperty(TingClient, "ConnectionStatuses", {
             get: function () {
@@ -97,7 +105,6 @@ var __extends = (this && this.__extends) || function (d, b) {
             enumerable: true,
             configurable: true
         });
-        // Protected Method. Should not be called from public interface
         TingClient.prototype.__setConnectionStatus = function (latestConnectionStatus) {
             this._connectionStatus.next(latestConnectionStatus);
             if (latestConnectionStatus === ConnectionStatuses_1.ConnectionStatuses.CONNECTED) {

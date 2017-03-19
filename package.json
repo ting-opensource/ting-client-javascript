@@ -1,6 +1,6 @@
 {
   "name": "ting-client-javascript",
-  "version": "0.1.0-alpha.8",
+  "version": "0.1.0-alpha.9",
   "description": "Durable and Realtime Messaging System primarily geared towards Web Apps",
   "main": "compiled/index.js",
   "scripts": {
@@ -9,25 +9,19 @@
   "author": "Tanmay Patel (me@tanmaypatel.com)",
   "license": "UNLICENCED",
   "dependencies": {
-    "core-js": "^2.4.1",
-    "eventemitter2": "^2.2.1",
-    "lodash": "^4.17.2",
-    "moment": "^2.17.0",
-    "rxjs": "^5.0.0-beta.12",
-    "socket.io-client": "^1.7.1",
-    "whatwg-fetch": "^2.0.1"
+    "eventemitter2": "^3.0.2",
+    "lodash": "^4.17.4",
+    "moment": "^2.18.0",
+    "rxjs": "^5.2.0",
+    "socket.io-client": "^1.7.3",
+    "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "@types/core-js": "^0.9.35",
     "@types/eventemitter2": "^2.2.1",
-    "@types/lodash": "^4.14.41",
-    "@types/node": "0.0.2",
+    "@types/lodash": "^4.14.55",
     "@types/socket.io-client": "^1.4.29",
-    "@types/whatwg-fetch": "0.0.32",
-    "@types/whatwg-streams": "0.0.1",
-    "es6-shim": "^0.35.1",
-    "systemjs": "^0.19.38",
-    "tslint": "^3.15.1",
-    "typescript": "^2.0.10"
+    "systemjs": "^0.20.10",
+    "tslint": "^4.5.1",
+    "typescript": "^2.2.1"
   }
 }

@@ -1,18 +1,20 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", './models/SocketConnectionEvents', './models/ConnectionStatuses', './models/TingEvents', './adapters/TopicAdapter', './adapters/MessageAdapter', './adapters/ReadReceiptAdapter'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "./models/SocketConnectionEvents", "./models/ConnectionStatuses", "./models/TingEvents", "./adapters/TopicAdapter", "./adapters/MessageAdapter", "./adapters/ReadReceiptAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    var SocketConnectionEvents_1 = require('./models/SocketConnectionEvents');
-    var ConnectionStatuses_1 = require('./models/ConnectionStatuses');
-    var TingEvents_1 = require('./models/TingEvents');
-    var TopicAdapter_1 = require('./adapters/TopicAdapter');
-    var MessageAdapter_1 = require('./adapters/MessageAdapter');
-    var ReadReceiptAdapter_1 = require('./adapters/ReadReceiptAdapter');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var SocketConnectionEvents_1 = require("./models/SocketConnectionEvents");
+    var ConnectionStatuses_1 = require("./models/ConnectionStatuses");
+    var TingEvents_1 = require("./models/TingEvents");
+    var TopicAdapter_1 = require("./adapters/TopicAdapter");
+    var MessageAdapter_1 = require("./adapters/MessageAdapter");
+    var ReadReceiptAdapter_1 = require("./adapters/ReadReceiptAdapter");
     function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
             clientFacade.__setConnectionStatus(ConnectionStatuses_1.ConnectionStatuses.ERRORED);
