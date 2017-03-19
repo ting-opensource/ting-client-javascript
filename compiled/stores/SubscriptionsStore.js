@@ -1,16 +1,18 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'lodash', 'rxjs', '../services/SubscriptionService', '../services/MessagesService'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "lodash", "rxjs", "../services/SubscriptionService", "../services/MessagesService"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    var _ = require('lodash');
-    var rxjs_1 = require('rxjs');
-    var SubscriptionService_1 = require('../services/SubscriptionService');
-    var MessagesService_1 = require('../services/MessagesService');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var _ = require("lodash");
+    var rxjs_1 = require("rxjs");
+    var SubscriptionService_1 = require("../services/SubscriptionService");
+    var MessagesService_1 = require("../services/MessagesService");
     var SubscriptionsStore = (function () {
         function SubscriptionsStore(client) {
             this._client = null;

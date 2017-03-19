@@ -1,17 +1,19 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'moment', 'lodash', '../models/Message', '../models/MessageTypes', './TopicAdapter'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "moment", "lodash", "../models/Message", "../models/MessageTypes", "./TopicAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    var moment = require('moment');
-    var _ = require('lodash');
-    var Message_1 = require('../models/Message');
-    var MessageTypes_1 = require('../models/MessageTypes');
-    var TopicAdapter_1 = require('./TopicAdapter');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var moment = require("moment");
+    var _ = require("lodash");
+    var Message_1 = require("../models/Message");
+    var MessageTypes_1 = require("../models/MessageTypes");
+    var TopicAdapter_1 = require("./TopicAdapter");
     var MessageAdapter = (function () {
         function MessageAdapter() {
         }

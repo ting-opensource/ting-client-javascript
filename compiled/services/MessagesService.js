@@ -1,17 +1,19 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', 'lodash', '../models/MessageTypes', '../adapters/MessageAdapter', '../adapters/ReadReceiptAdapter'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "whatwg-fetch", "lodash", "../models/MessageTypes", "../adapters/MessageAdapter", "../adapters/ReadReceiptAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    require('whatwg-fetch');
-    var _ = require('lodash');
-    var MessageTypes_1 = require('../models/MessageTypes');
-    var MessageAdapter_1 = require('../adapters/MessageAdapter');
-    var ReadReceiptAdapter_1 = require('../adapters/ReadReceiptAdapter');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    require("whatwg-fetch");
+    var _ = require("lodash");
+    var MessageTypes_1 = require("../models/MessageTypes");
+    var MessageAdapter_1 = require("../adapters/MessageAdapter");
+    var ReadReceiptAdapter_1 = require("../adapters/ReadReceiptAdapter");
     var DEFAULT_PAGE_SIZE = 100;
     var MessagesService = (function () {
         function MessagesService() {

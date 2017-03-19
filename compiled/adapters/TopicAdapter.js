@@ -1,15 +1,17 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'moment', 'lodash', '../models/Topic'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "moment", "lodash", "../models/Topic"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    var moment = require('moment');
-    var _ = require('lodash');
-    var Topic_1 = require('../models/Topic');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var moment = require("moment");
+    var _ = require("lodash");
+    var Topic_1 = require("../models/Topic");
     var TopicAdapter = (function () {
         function TopicAdapter() {
         }

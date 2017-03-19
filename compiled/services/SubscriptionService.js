@@ -1,14 +1,16 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', '../adapters/SubscriptionAdapter'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "whatwg-fetch", "../adapters/SubscriptionAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    require('whatwg-fetch');
-    var SubscriptionAdapter_1 = require('../adapters/SubscriptionAdapter');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    require("whatwg-fetch");
+    var SubscriptionAdapter_1 = require("../adapters/SubscriptionAdapter");
     var SubscriptionService = (function () {
         function SubscriptionService() {
         }

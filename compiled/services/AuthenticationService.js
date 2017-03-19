@@ -1,14 +1,16 @@
 (function (factory) {
-    if (typeof module === 'object' && typeof module.exports === 'object') {
-        var v = factory(require, exports); if (v !== undefined) module.exports = v;
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
     }
-    else if (typeof define === 'function' && define.amd) {
-        define(["require", "exports", 'whatwg-fetch', '../utils/Base64Encoder'], factory);
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports", "whatwg-fetch", "../utils/Base64Encoder"], factory);
     }
 })(function (require, exports) {
     "use strict";
-    require('whatwg-fetch');
-    var Base64Encoder_1 = require('../utils/Base64Encoder');
+    Object.defineProperty(exports, "__esModule", { value: true });
+    require("whatwg-fetch");
+    var Base64Encoder_1 = require("../utils/Base64Encoder");
     var AuthenticationService = (function () {
         function AuthenticationService() {
         }
