@@ -105,6 +105,13 @@ System.register("models/MessageTypes", [], function (exports_2, context_2) {
                     enumerable: true,
                     configurable: true
                 });
+                Object.defineProperty(MessageTypes, "FILE", {
+                    get: function () {
+                        return 'application/octet-stream';
+                    },
+                    enumerable: true,
+                    configurable: true
+                });
                 return MessageTypes;
             }());
             exports_2("MessageTypes", MessageTypes);
@@ -291,9 +298,33 @@ System.register("models/Subscription", [], function (exports_6, context_6) {
         }
     };
 });
-System.register("utils/Base64Encoder", [], function (exports_7, context_7) {
+System.register("models/FileMetadata", [], function (exports_7, context_7) {
     "use strict";
     var __moduleName = context_7 && context_7.id;
+    var FileMetadata;
+    return {
+        setters: [],
+        execute: function () {
+            FileMetadata = (function () {
+                function FileMetadata(data) {
+                    this.key = '';
+                    this.originalName = '';
+                    this.contentType = '';
+                    this.createdAt = null;
+                    this.updatedAt = null;
+                    for (var key in data) {
+                        this[key] = data[key];
+                    }
+                }
+                return FileMetadata;
+            }());
+            exports_7("FileMetadata", FileMetadata);
+        }
+    };
+});
+System.register("utils/Base64Encoder", [], function (exports_8, context_8) {
+    "use strict";
+    var __moduleName = context_8 && context_8.id;
     var Base64Encoder;
     return {
         setters: [],
@@ -308,13 +339,13 @@ System.register("utils/Base64Encoder", [], function (exports_7, context_7) {
                 };
                 return Base64Encoder;
             }());
-            exports_7("Base64Encoder", Base64Encoder);
+            exports_8("Base64Encoder", Base64Encoder);
         }
     };
 });
-System.register("services/AuthenticationService", ["whatwg-fetch", "utils/Base64Encoder"], function (exports_8, context_8) {
+System.register("services/AuthenticationService", ["whatwg-fetch", "utils/Base64Encoder"], function (exports_9, context_9) {
     "use strict";
-    var __moduleName = context_8 && context_8.id;
+    var __moduleName = context_9 && context_9.id;
     var Base64Encoder_1, AuthenticationService;
     return {
         setters: [
@@ -356,13 +387,13 @@ System.register("services/AuthenticationService", ["whatwg-fetch", "utils/Base64
                 };
                 return AuthenticationService;
             }());
-            exports_8("AuthenticationService", AuthenticationService);
+            exports_9("AuthenticationService", AuthenticationService);
         }
     };
 });
-System.register("adapters/TopicAdapter", ["moment", "lodash", "models/Topic"], function (exports_9, context_9) {
+System.register("adapters/TopicAdapter", ["moment", "lodash", "models/Topic"], function (exports_10, context_10) {
     "use strict";
-    var __moduleName = context_9 && context_9.id;
+    var __moduleName = context_10 && context_10.id;
     var moment, _, Topic_1, TopicAdapter;
     return {
         setters: [
@@ -389,14 +420,14 @@ System.register("adapters/TopicAdapter", ["moment", "lodash", "models/Topic"], f
                 };
                 return TopicAdapter;
             }());
-            exports_9("TopicAdapter", TopicAdapter);
+            exports_10("TopicAdapter", TopicAdapter);
         }
     };
 });
-System.register("adapters/MessageAdapter", ["moment", "lodash", "models/Message", "models/MessageTypes", "adapters/TopicAdapter"], function (exports_10, context_10) {
+System.register("adapters/MessageAdapter", ["moment", "lodash", "models/Message", "models/FileMetadata", "models/MessageTypes", "adapters/TopicAdapter"], function (exports_11, context_11) {
     "use strict";
-    var __moduleName = context_10 && context_10.id;
-    var moment, _, Message_1, MessageTypes_2, TopicAdapter_1, MessageAdapter;
+    var __moduleName = context_11 && context_11.id;
+    var moment, _, Message_1, FileMetadata_1, MessageTypes_2, TopicAdapter_1, MessageAdapter;
     return {
         setters: [
             function (moment_2) {
@@ -407,6 +438,9 @@ System.register("adapters/MessageAdapter", ["moment", "lodash", "models/Message"
             },
             function (Message_1_1) {
                 Message_1 = Message_1_1;
+            },
+            function (FileMetadata_1_1) {
+                FileMetadata_1 = FileMetadata_1_1;
             },
             function (MessageTypes_2_1) {
                 MessageTypes_2 = MessageTypes_2_1;
@@ -419,12 +453,22 @@ System.register("adapters/MessageAdapter", ["moment", "lodash", "models/Message"
             MessageAdapter = (function () {
                 function MessageAdapter() {
                 }
+                MessageAdapter.fileMetadataFromServerResponse = function (fileMetadataData) {
+                    return new FileMetadata_1.FileMetadata(_.extend({}, fileMetadataData, {
+                        createdAt: fileMetadataData.createdAt ? moment.utc(fileMetadataData.createdAt) : null,
+                        updatedAt: fileMetadataData.updatedAt ? moment.utc(fileMetadataData.updatedAt) : null,
+                    }));
+                };
                 MessageAdapter.fromServerResponse = function (messageData) {
                     var messageBody = '';
                     var type = messageData.type;
                     try {
                         if (messageData.type === MessageTypes_2.MessageTypes.JSON) {
                             messageBody = JSON.parse(messageData.body);
+                        }
+                        else if (messageData.type === MessageTypes_2.MessageTypes.FILE) {
+                            var fileMetadataData = JSON.parse(messageData.body);
+                            messageBody = MessageAdapter.fileMetadataFromServerResponse(fileMetadataData);
                         }
                         else {
                             messageBody = messageData.body;
@@ -446,13 +490,13 @@ System.register("adapters/MessageAdapter", ["moment", "lodash", "models/Message"
                 };
                 return MessageAdapter;
             }());
-            exports_10("MessageAdapter", MessageAdapter);
+            exports_11("MessageAdapter", MessageAdapter);
         }
     };
 });
-System.register("adapters/ReadReceiptAdapter", ["moment", "lodash", "models/ReadReceipt"], function (exports_11, context_11) {
+System.register("adapters/ReadReceiptAdapter", ["moment", "lodash", "models/ReadReceipt"], function (exports_12, context_12) {
     "use strict";
-    var __moduleName = context_11 && context_11.id;
+    var __moduleName = context_12 && context_12.id;
     var moment, _, ReadReceipt_1, ReadReceiptAdapter;
     return {
         setters: [
@@ -478,13 +522,13 @@ System.register("adapters/ReadReceiptAdapter", ["moment", "lodash", "models/Read
                 };
                 return ReadReceiptAdapter;
             }());
-            exports_11("ReadReceiptAdapter", ReadReceiptAdapter);
+            exports_12("ReadReceiptAdapter", ReadReceiptAdapter);
         }
     };
 });
-System.register("services/MessagesService", ["whatwg-fetch", "lodash", "models/MessageTypes", "adapters/MessageAdapter", "adapters/ReadReceiptAdapter"], function (exports_12, context_12) {
+System.register("services/MessagesService", ["whatwg-fetch", "lodash", "models/MessageTypes", "adapters/MessageAdapter", "adapters/ReadReceiptAdapter"], function (exports_13, context_13) {
     "use strict";
-    var __moduleName = context_12 && context_12.id;
+    var __moduleName = context_13 && context_13.id;
     var _, MessageTypes_3, MessageAdapter_1, ReadReceiptAdapter_1, DEFAULT_PAGE_SIZE, MessagesService;
     return {
         setters: [
@@ -589,6 +633,33 @@ System.register("services/MessagesService", ["whatwg-fetch", "lodash", "models/M
                         return MessageAdapter_1.MessageAdapter.fromServerResponse(response);
                     });
                 };
+                MessagesService.publishFile = function (session, topicName, file) {
+                    var url = session.serviceBaseURL + "/files";
+                    var formData = new FormData();
+                    formData.append('topicName', topicName);
+                    formData.append('createTopicIfNotExist', 'true');
+                    formData.append('file', file);
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': "Bearer " + session.token
+                        },
+                        body: formData
+                    })
+                        .then(function (response) {
+                        if (response.ok) {
+                            return response.json();
+                        }
+                        else {
+                            var error = new Error(response.statusText);
+                            throw error;
+                        }
+                    })
+                        .then(function (response) {
+                        return MessageAdapter_1.MessageAdapter.fromServerResponse(response);
+                    });
+                };
                 MessagesService.markAMessageAsRead = function (session, message) {
                     var url = session.serviceBaseURL + "/messages/" + message.messageId + "/read";
                     return fetch(url, {
@@ -661,13 +732,13 @@ System.register("services/MessagesService", ["whatwg-fetch", "lodash", "models/M
                 };
                 return MessagesService;
             }());
-            exports_12("MessagesService", MessagesService);
+            exports_13("MessagesService", MessagesService);
         }
     };
 });
-System.register("adapters/SubscriptionAdapter", ["moment", "lodash", "models/Subscription", "adapters/TopicAdapter"], function (exports_13, context_13) {
+System.register("adapters/SubscriptionAdapter", ["moment", "lodash", "models/Subscription", "adapters/TopicAdapter"], function (exports_14, context_14) {
     "use strict";
-    var __moduleName = context_13 && context_13.id;
+    var __moduleName = context_14 && context_14.id;
     var moment, _, Subscription_1, TopicAdapter_2, SubscriptionAdapter;
     return {
         setters: [
@@ -698,13 +769,13 @@ System.register("adapters/SubscriptionAdapter", ["moment", "lodash", "models/Sub
                 };
                 return SubscriptionAdapter;
             }());
-            exports_13("SubscriptionAdapter", SubscriptionAdapter);
+            exports_14("SubscriptionAdapter", SubscriptionAdapter);
         }
     };
 });
-System.register("services/SubscriptionService", ["whatwg-fetch", "adapters/SubscriptionAdapter"], function (exports_14, context_14) {
+System.register("services/SubscriptionService", ["whatwg-fetch", "adapters/SubscriptionAdapter"], function (exports_15, context_15) {
     "use strict";
-    var __moduleName = context_14 && context_14.id;
+    var __moduleName = context_15 && context_15.id;
     var SubscriptionAdapter_1, SubscriptionService;
     return {
         setters: [
@@ -773,13 +844,13 @@ System.register("services/SubscriptionService", ["whatwg-fetch", "adapters/Subsc
                 };
                 return SubscriptionService;
             }());
-            exports_14("SubscriptionService", SubscriptionService);
+            exports_15("SubscriptionService", SubscriptionService);
         }
     };
 });
-System.register("stores/SubscriptionsStore", ["lodash", "rxjs", "services/SubscriptionService", "services/MessagesService"], function (exports_15, context_15) {
+System.register("stores/SubscriptionsStore", ["lodash", "rxjs", "services/SubscriptionService", "services/MessagesService"], function (exports_16, context_16) {
     "use strict";
-    var __moduleName = context_15 && context_15.id;
+    var __moduleName = context_16 && context_16.id;
     var _, rxjs_2, SubscriptionService_1, MessagesService_1, SubscriptionsStore;
     return {
         setters: [
@@ -902,13 +973,13 @@ System.register("stores/SubscriptionsStore", ["lodash", "rxjs", "services/Subscr
                 };
                 return SubscriptionsStore;
             }());
-            exports_15("SubscriptionsStore", SubscriptionsStore);
+            exports_16("SubscriptionsStore", SubscriptionsStore);
         }
     };
 });
-System.register("models/SocketConnectionEvents", [], function (exports_16, context_16) {
+System.register("models/SocketConnectionEvents", [], function (exports_17, context_17) {
     "use strict";
-    var __moduleName = context_16 && context_16.id;
+    var __moduleName = context_17 && context_17.id;
     var SocketConnectionEvents;
     return {
         setters: [],
@@ -974,13 +1045,13 @@ System.register("models/SocketConnectionEvents", [], function (exports_16, conte
                 });
                 return SocketConnectionEvents;
             }());
-            exports_16("SocketConnectionEvents", SocketConnectionEvents);
+            exports_17("SocketConnectionEvents", SocketConnectionEvents);
         }
     };
 });
-System.register("models/ConnectionStatuses", [], function (exports_17, context_17) {
+System.register("models/ConnectionStatuses", [], function (exports_18, context_18) {
     "use strict";
-    var __moduleName = context_17 && context_17.id;
+    var __moduleName = context_18 && context_18.id;
     var ConnectionStatuses;
     return {
         setters: [],
@@ -1018,13 +1089,13 @@ System.register("models/ConnectionStatuses", [], function (exports_17, context_1
                 });
                 return ConnectionStatuses;
             }());
-            exports_17("ConnectionStatuses", ConnectionStatuses);
+            exports_18("ConnectionStatuses", ConnectionStatuses);
         }
     };
 });
-System.register("models/TingEvents", [], function (exports_18, context_18) {
+System.register("models/TingEvents", [], function (exports_19, context_19) {
     "use strict";
-    var __moduleName = context_18 && context_18.id;
+    var __moduleName = context_19 && context_19.id;
     var TingEvents;
     return {
         setters: [],
@@ -1062,13 +1133,13 @@ System.register("models/TingEvents", [], function (exports_18, context_18) {
                 });
                 return TingEvents;
             }());
-            exports_18("TingEvents", TingEvents);
+            exports_19("TingEvents", TingEvents);
         }
     };
 });
-System.register("TingClient", ["whatwg-fetch", "eventemitter2", "socket.io-client", "rxjs", "models/Session", "services/AuthenticationService", "services/MessagesService", "stores/SubscriptionsStore", "ConnectionListeners", "models/SocketConnectionEvents", "models/ConnectionStatuses", "models/TingEvents"], function (exports_19, context_19) {
+System.register("TingClient", ["whatwg-fetch", "eventemitter2", "socket.io-client", "rxjs", "models/Session", "services/AuthenticationService", "services/MessagesService", "stores/SubscriptionsStore", "ConnectionListeners", "models/SocketConnectionEvents", "models/ConnectionStatuses", "models/TingEvents"], function (exports_20, context_20) {
     "use strict";
-    var __moduleName = context_19 && context_19.id;
+    var __moduleName = context_20 && context_20.id;
     var EventEmitter, io, rxjs_3, Session_1, AuthenticationService_1, MessagesService_2, SubscriptionsStore_1, ConnectionListeners_1, SocketConnectionEvents_1, ConnectionStatuses_1, TingEvents_1, _instance, SingletonEnforcer, TingClient;
     return {
         setters: [
@@ -1260,6 +1331,12 @@ System.register("TingClient", ["whatwg-fetch", "eventemitter2", "socket.io-clien
                 TingClient.prototype.publishMessage = function (topicName, messageBody, messageType) {
                     return MessagesService_2.MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
                 };
+                TingClient.prototype.publishFile = function (topicName, file) {
+                    return MessagesService_2.MessagesService.publishFile(this.session, topicName, file);
+                };
+                TingClient.prototype.getFileDownloadURL = function (fileMeatdata) {
+                    return this.session.serviceBaseURL + "/files/" + fileMeatdata.key;
+                };
                 TingClient.prototype.markAMessageAsRead = function (message) {
                     return this._subscriptionsStore.markAMessageAsRead(message);
                 };
@@ -1271,13 +1348,13 @@ System.register("TingClient", ["whatwg-fetch", "eventemitter2", "socket.io-clien
                 };
                 return TingClient;
             }(EventEmitter.EventEmitter2));
-            exports_19("TingClient", TingClient);
+            exports_20("TingClient", TingClient);
         }
     };
 });
-System.register("ConnectionListeners", ["models/SocketConnectionEvents", "models/ConnectionStatuses", "models/TingEvents", "adapters/TopicAdapter", "adapters/MessageAdapter", "adapters/ReadReceiptAdapter"], function (exports_20, context_20) {
+System.register("ConnectionListeners", ["models/SocketConnectionEvents", "models/ConnectionStatuses", "models/TingEvents", "adapters/TopicAdapter", "adapters/MessageAdapter", "adapters/ReadReceiptAdapter"], function (exports_21, context_21) {
     "use strict";
-    var __moduleName = context_20 && context_20.id;
+    var __moduleName = context_21 && context_21.id;
     function onConnect(socket, clientFacade, subscriptionsStore) {
         function onError() {
             clientFacade.__setConnectionStatus(ConnectionStatuses_2.ConnectionStatuses.ERRORED);
@@ -1352,7 +1429,7 @@ System.register("ConnectionListeners", ["models/SocketConnectionEvents", "models
         socket.on(TingEvents_2.TingEvents.MESSAGE, onMessage);
         socket.on(TingEvents_2.TingEvents.MESSAGE_READ, onMessageRead);
     }
-    exports_20("onConnect", onConnect);
+    exports_21("onConnect", onConnect);
     var SocketConnectionEvents_2, ConnectionStatuses_2, TingEvents_2, TopicAdapter_3, MessageAdapter_2, ReadReceiptAdapter_2;
     return {
         setters: [

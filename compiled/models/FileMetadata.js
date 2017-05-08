@@ -14,7 +14,6 @@
             this.key = '';
             this.originalName = '';
             this.contentType = '';
-            this.url = '';
             this.createdAt = null;
             this.updatedAt = null;
             for (var key in data) {
