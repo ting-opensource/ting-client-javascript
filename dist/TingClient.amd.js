@@ -95,6 +95,13 @@ define("models/MessageTypes", ["require", "exports"], function (require, exports
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(MessageTypes, "FILE", {
+            get: function () {
+                return 'application/octet-stream';
+            },
+            enumerable: true,
+            configurable: true
+        });
         return MessageTypes;
     }());
     exports.MessageTypes = MessageTypes;
@@ -244,6 +251,24 @@ define("models/Subscription", ["require", "exports"], function (require, exports
     }());
     exports.Subscription = Subscription;
 });
+define("models/FileMetadata", ["require", "exports"], function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+    var FileMetadata = (function () {
+        function FileMetadata(data) {
+            this.key = '';
+            this.originalName = '';
+            this.contentType = '';
+            this.createdAt = null;
+            this.updatedAt = null;
+            for (var key in data) {
+                this[key] = data[key];
+            }
+        }
+        return FileMetadata;
+    }());
+    exports.FileMetadata = FileMetadata;
+});
 define("utils/Base64Encoder", ["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -312,18 +337,28 @@ define("adapters/TopicAdapter", ["require", "exports", "moment", "lodash", "mode
     }());
     exports.TopicAdapter = TopicAdapter;
 });
-define("adapters/MessageAdapter", ["require", "exports", "moment", "lodash", "models/Message", "models/MessageTypes", "adapters/TopicAdapter"], function (require, exports, moment, _, Message_1, MessageTypes_2, TopicAdapter_1) {
+define("adapters/MessageAdapter", ["require", "exports", "moment", "lodash", "models/Message", "models/FileMetadata", "models/MessageTypes", "adapters/TopicAdapter"], function (require, exports, moment, _, Message_1, FileMetadata_1, MessageTypes_2, TopicAdapter_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var MessageAdapter = (function () {
         function MessageAdapter() {
         }
+        MessageAdapter.fileMetadataFromServerResponse = function (fileMetadataData) {
+            return new FileMetadata_1.FileMetadata(_.extend({}, fileMetadataData, {
+                createdAt: fileMetadataData.createdAt ? moment.utc(fileMetadataData.createdAt) : null,
+                updatedAt: fileMetadataData.updatedAt ? moment.utc(fileMetadataData.updatedAt) : null,
+            }));
+        };
         MessageAdapter.fromServerResponse = function (messageData) {
             var messageBody = '';
             var type = messageData.type;
             try {
                 if (messageData.type === MessageTypes_2.MessageTypes.JSON) {
                     messageBody = JSON.parse(messageData.body);
+                }
+                else if (messageData.type === MessageTypes_2.MessageTypes.FILE) {
+                    var fileMetadataData = JSON.parse(messageData.body);
+                    messageBody = MessageAdapter.fileMetadataFromServerResponse(fileMetadataData);
                 }
                 else {
                     messageBody = messageData.body;
@@ -437,6 +472,33 @@ define("services/MessagesService", ["require", "exports", "lodash", "models/Mess
                         body: messageBody
                     }
                 })
+            })
+                .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    var error = new Error(response.statusText);
+                    throw error;
+                }
+            })
+                .then(function (response) {
+                return MessageAdapter_1.MessageAdapter.fromServerResponse(response);
+            });
+        };
+        MessagesService.publishFile = function (session, topicName, file) {
+            var url = session.serviceBaseURL + "/files";
+            var formData = new FormData();
+            formData.append('topicName', topicName);
+            formData.append('createTopicIfNotExist', 'true');
+            formData.append('file', file);
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': "Bearer " + session.token
+                },
+                body: formData
             })
                 .then(function (response) {
                 if (response.ok) {
@@ -1011,6 +1073,12 @@ define("TingClient", ["require", "exports", "eventemitter2", "socket.io-client",
         };
         TingClient.prototype.publishMessage = function (topicName, messageBody, messageType) {
             return MessagesService_2.MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
+        };
+        TingClient.prototype.publishFile = function (topicName, file) {
+            return MessagesService_2.MessagesService.publishFile(this.session, topicName, file);
+        };
+        TingClient.prototype.getFileDownloadURL = function (fileMeatdata) {
+            return this.session.serviceBaseURL + "/files/" + fileMeatdata.key;
         };
         TingClient.prototype.markAMessageAsRead = function (message) {
             return this._subscriptionsStore.markAMessageAsRead(message);

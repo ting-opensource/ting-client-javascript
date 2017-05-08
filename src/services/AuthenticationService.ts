@@ -1,14 +1,14 @@
 import 'whatwg-fetch';
 import * as _ from 'lodash';
 
-import {Base64Encoder} from '../utils/Base64Encoder';
-import {Session} from '../models/Session';
+import { Base64Encoder } from '../utils/Base64Encoder';
+import { Session } from '../models/Session';
 
 export class AuthenticationService
 {
-    static authenticateSession(session:Session):Promise<Session>
+    static authenticateSession(session: Session): Promise<Session>
     {
-        let clientAuthCredentials:string = `${session.clientId}:${session.clientSecret}`;
+        let clientAuthCredentials: string = `${session.clientId}:${session.clientSecret}`;
 
         return fetch(`${session.serviceBaseURL}/authorize`, {
             method: 'POST',
@@ -20,22 +20,22 @@ export class AuthenticationService
                 'Authorization': `Basic ${Base64Encoder.encode(clientAuthCredentials)}`
             }
         })
-        .then((response:any) =>
-        {
-            if(response.ok)
+            .then((response: any) =>
             {
-                return response.json();
-            }
-            else
+                if(response.ok)
+                {
+                    return response.json();
+                }
+                else
+                {
+                    let error = new Error(response.statusText);
+                    throw error;
+                }
+            })
+            .then((response: any) =>
             {
-                let error = new Error(response.statusText);
-                throw error;
-            }
-        })
-        .then((response:any) =>
-        {
-            session.autheticateWithToken(response.token);
-            return session;
-        });
+                session.autheticateWithToken(response.token);
+                return session;
+            });
     }
 }

@@ -99,6 +99,33 @@
                 return MessageAdapter_1.MessageAdapter.fromServerResponse(response);
             });
         };
+        MessagesService.publishFile = function (session, topicName, file) {
+            var url = session.serviceBaseURL + "/files";
+            var formData = new FormData();
+            formData.append('topicName', topicName);
+            formData.append('createTopicIfNotExist', 'true');
+            formData.append('file', file);
+            return fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': "Bearer " + session.token
+                },
+                body: formData
+            })
+                .then(function (response) {
+                if (response.ok) {
+                    return response.json();
+                }
+                else {
+                    var error = new Error(response.statusText);
+                    throw error;
+                }
+            })
+                .then(function (response) {
+                return MessageAdapter_1.MessageAdapter.fromServerResponse(response);
+            });
+        };
         MessagesService.markAMessageAsRead = function (session, message) {
             var url = session.serviceBaseURL + "/messages/" + message.messageId + "/read";
             return fetch(url, {

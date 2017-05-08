@@ -1,21 +1,21 @@
 export class TingEvents
 {
-    static get SUBSCRIPTION_LIVE():string
+    static get SUBSCRIPTION_LIVE(): string
     {
         return 'subscription-live';
     }
 
-    static get SUBSCRIPTION_OFF():string
+    static get SUBSCRIPTION_OFF(): string
     {
         return 'subscription-off';
     }
 
-    static get MESSAGE():string
+    static get MESSAGE(): string
     {
         return 'message';
     }
 
-    static get MESSAGE_READ():string
+    static get MESSAGE_READ(): string
     {
         return 'message-read';
     }

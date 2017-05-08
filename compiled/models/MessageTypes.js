@@ -33,6 +33,13 @@
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(MessageTypes, "FILE", {
+            get: function () {
+                return 'application/octet-stream';
+            },
+            enumerable: true,
+            configurable: true
+        });
         return MessageTypes;
     }());
     exports.MessageTypes = MessageTypes;

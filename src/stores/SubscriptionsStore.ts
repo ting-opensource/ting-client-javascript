@@ -1,43 +1,43 @@
 import * as _ from 'lodash';
-import {Observable, BehaviorSubject} from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
-import {TingClient} from '../TingClient';
-import {Topic} from '../models/Topic';
-import {Subscription} from '../models/Subscription';
-import {Message} from '../models/Message';
-import {ReadReceipt} from '../models/ReadReceipt';
-import {SubscriptionService} from '../services/SubscriptionService';
-import {MessagesService} from '../services/MessagesService';
+import { TingClient } from '../TingClient';
+import { Topic } from '../models/Topic';
+import { Subscription } from '../models/Subscription';
+import { Message } from '../models/Message';
+import { ReadReceipt } from '../models/ReadReceipt';
+import { SubscriptionService } from '../services/SubscriptionService';
+import { MessagesService } from '../services/MessagesService';
 
 export class SubscriptionsStore
 {
-    private _client:TingClient = null;
+    private _client: TingClient = null;
 
-    private _subscribedTopics:BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>([]);
-    get subscribedTopics():BehaviorSubject<Array<Topic>>
+    private _subscribedTopics: BehaviorSubject<Array<Topic>> = new BehaviorSubject<Array<Topic>>([]);
+    get subscribedTopics(): BehaviorSubject<Array<Topic>>
     {
         return this._subscribedTopics;
     }
 
-    constructor(client:TingClient)
+    constructor(client: TingClient)
     {
         this._client = client;
     }
 
-    subscribeToTopicByName(topicName:string):Promise<Subscription>
+    subscribeToTopicByName(topicName: string): Promise<Subscription>
     {
         return SubscriptionService.subscribeToTopicByName(this._client.session, topicName);
     }
 
-    unsubscribeFromTopic(topic:Topic):Promise<Subscription>
+    unsubscribeFromTopic(topic: Topic): Promise<Subscription>
     {
         return SubscriptionService.unsubscribeFromTopic(this._client.session, topic);
     }
 
-    addSubscribedTopic(topic:Topic):BehaviorSubject<Array<Topic>>
+    addSubscribedTopic(topic: Topic): BehaviorSubject<Array<Topic>>
     {
-        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
+        let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.topicId === topic.topicId;
         });
@@ -55,10 +55,10 @@ export class SubscriptionsStore
         return this.subscribedTopics;
     }
 
-    removeSubscribedTopicById(topicId:string):BehaviorSubject<Array<Topic>>
+    removeSubscribedTopicById(topicId: string): BehaviorSubject<Array<Topic>>
     {
-        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
+        let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.topicId === topicId;
         });
@@ -74,10 +74,10 @@ export class SubscriptionsStore
         return this.subscribedTopics;
     }
 
-    getTopicForName(topicName:string):Topic
+    getTopicForName(topicName: string): Topic
     {
-        let subscribedTopicsArray:Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic:Topic = _.find(subscribedTopicsArray, (datum:Topic) =>
+        let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
+        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.name === topicName;
         });
@@ -85,14 +85,14 @@ export class SubscriptionsStore
         return matchedTopic || null;
     }
 
-    getMessageStreamForTopic(topic:Topic):Observable<Array<Message>>
+    getMessageStreamForTopic(topic: Topic): Observable<Array<Message>>
     {
         return topic.messages;
     }
 
-    getMessageStreamForTopicName(topicName:string):Observable<Array<Message>>
+    getMessageStreamForTopicName(topicName: string): Observable<Array<Message>>
     {
-        let matchingTopic:Topic = this.getTopicForName(topicName);
+        let matchingTopic: Topic = this.getTopicForName(topicName);
 
         if(matchingTopic)
         {
@@ -104,56 +104,56 @@ export class SubscriptionsStore
         }
     }
 
-    fetchMessagesForTopicSinceMessage(topic:Topic, sinceMessage:Message):Promise<Array<Message>>
+    fetchMessagesForTopicSinceMessage(topic: Topic, sinceMessage: Message): Promise<Array<Message>>
     {
         return MessagesService.fetchMessagesForTopicSinceMessage(this._client.session, topic, sinceMessage)
-        .then((messages:Array<Message>) =>
-        {
-            topic.mergeMessages(messages);
-            return messages;
-        });
+            .then((messages: Array<Message>) =>
+            {
+                topic.mergeMessages(messages);
+                return messages;
+            });
     }
 
-    fetchMessagesForTopicTillMessage(topic:Topic, tillMessage:Message):Promise<Array<Message>>
+    fetchMessagesForTopicTillMessage(topic: Topic, tillMessage: Message): Promise<Array<Message>>
     {
         return MessagesService.fetchMessagesForTopicTillMessage(this._client.session, topic, tillMessage)
-        .then((messages:Array<Message>) =>
-        {
-            topic.mergeMessages(messages);
-            return messages;
-        });
+            .then((messages: Array<Message>) =>
+            {
+                topic.mergeMessages(messages);
+                return messages;
+            });
     }
 
-    markAMessageAsRead(message:Message):Promise<Observable<Array<Message>>>
+    markAMessageAsRead(message: Message): Promise<Observable<Array<Message>>>
     {
         return MessagesService.markAMessageAsRead(this._client.session, message)
-        .then((readReceipt:ReadReceipt) =>
-        {
-            return message.topic.markAMessageAsRead(readReceipt);
-        });
+            .then((readReceipt: ReadReceipt) =>
+            {
+                return message.topic.markAMessageAsRead(readReceipt);
+            });
     }
 
-    markMessagesSinceAMessageAsRead(sinceMessage:Message):Promise<Observable<Array<Message>>>
+    markMessagesSinceAMessageAsRead(sinceMessage: Message): Promise<Observable<Array<Message>>>
     {
         return MessagesService.markMessagesSinceAMessageAsRead(this._client.session, sinceMessage)
-        .then((readReceipts:Array<ReadReceipt>) =>
-        {
-            return sinceMessage.topic.markMessagesAsRead(readReceipts);
-        });
+            .then((readReceipts: Array<ReadReceipt>) =>
+            {
+                return sinceMessage.topic.markMessagesAsRead(readReceipts);
+            });
     }
 
-    markMessagesTillAMessageAsRead(tillMessage:Message):Promise<Observable<Array<Message>>>
+    markMessagesTillAMessageAsRead(tillMessage: Message): Promise<Observable<Array<Message>>>
     {
         return MessagesService.markMessagesTillAMessageAsRead(this._client.session, tillMessage)
-        .then((readReceipts:Array<ReadReceipt>) =>
-        {
-            return tillMessage.topic.markMessagesAsRead(readReceipts);
-        });
+            .then((readReceipts: Array<ReadReceipt>) =>
+            {
+                return tillMessage.topic.markMessagesAsRead(readReceipts);
+            });
     }
 
-    reset():void
+    reset(): void
     {
-        _.forEach(this.subscribedTopics.getValue(), (datum:Topic) =>
+        _.forEach(this.subscribedTopics.getValue(), (datum: Topic) =>
         {
             datum.reset();
         });
