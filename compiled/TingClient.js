@@ -185,6 +185,9 @@ var __extends = (this && this.__extends) || (function () {
         TingClient.prototype.publishFile = function (topicName, file) {
             return MessagesService_1.MessagesService.publishFile(this.session, topicName, file);
         };
+        TingClient.prototype.getFileDownloadURL = function (fileMeatdata) {
+            return this.session.serviceBaseURL + "/files/" + fileMeatdata.key;
+        };
         TingClient.prototype.markAMessageAsRead = function (message) {
             return this._subscriptionsStore.markAMessageAsRead(message);
         };
