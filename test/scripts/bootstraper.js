@@ -1,7 +1,7 @@
-System.import('compiled:TingClient')
+System.import('compiled:/TingClient')
 .then(function({TingClient})
 {
-    let client = new TingClient('http://localhost:6012',
+    let client = new TingClient('http://localhost:6007',
                                 'TEST_SUBSCRIBER',
                                 '__TING_CLIENT_ID_FOR_DEV__',
                                 '__TING_CLIENT_SECRET_FOR_DEV__');

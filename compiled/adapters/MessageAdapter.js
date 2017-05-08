@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "moment", "lodash", "../models/Message", "../models/MessageTypes", "./TopicAdapter"], factory);
+        define(["require", "exports", "moment", "lodash", "../models/Message", "../models/FileMetadata", "../models/MessageTypes", "./TopicAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,17 +12,28 @@
     var moment = require("moment");
     var _ = require("lodash");
     var Message_1 = require("../models/Message");
+    var FileMetadata_1 = require("../models/FileMetadata");
     var MessageTypes_1 = require("../models/MessageTypes");
     var TopicAdapter_1 = require("./TopicAdapter");
     var MessageAdapter = (function () {
         function MessageAdapter() {
         }
+        MessageAdapter.fileMetadataFromServerResponse = function (fileMetadataData) {
+            return new FileMetadata_1.FileMetadata(_.extend({}, fileMetadataData, {
+                createdAt: fileMetadataData.createdAt ? moment.utc(fileMetadataData.createdAt) : null,
+                updatedAt: fileMetadataData.updatedAt ? moment.utc(fileMetadataData.updatedAt) : null,
+            }));
+        };
         MessageAdapter.fromServerResponse = function (messageData) {
             var messageBody = '';
             var type = messageData.type;
             try {
                 if (messageData.type === MessageTypes_1.MessageTypes.JSON) {
                     messageBody = JSON.parse(messageData.body);
+                }
+                else if (messageData.type === MessageTypes_1.MessageTypes.FILE) {
+                    var fileMetadataData = JSON.parse(messageData.body);
+                    messageBody = MessageAdapter.fileMetadataFromServerResponse(fileMetadataData);
                 }
                 else {
                     messageBody = messageData.body;

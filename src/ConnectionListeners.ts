@@ -1,20 +1,20 @@
 import * as io from 'socket.io-client';
 
-import {TingClient} from './TingClient';
-import {IIncomingTopic, Topic} from './models/Topic';
-import {IIncomingSubscription, Subscription} from './models/Subscription';
-import {IIncomingMessage, Message} from './models/Message';
-import {IIncomingReadReceipt, ReadReceipt} from './models/ReadReceipt';
-import {SocketConnectionEvents} from './models/SocketConnectionEvents';
-import {ConnectionStatuses} from './models/ConnectionStatuses';
-import {TingEvents} from './models/TingEvents';
-import {TopicAdapter} from './adapters/TopicAdapter';
-import {SubscriptionAdapter} from './adapters/SubscriptionAdapter';
-import {MessageAdapter} from './adapters/MessageAdapter';
-import {ReadReceiptAdapter} from './adapters/ReadReceiptAdapter';
-import {SubscriptionsStore} from './stores/SubscriptionsStore';
+import { TingClient } from './TingClient';
+import { IIncomingTopic, Topic } from './models/Topic';
+import { IIncomingSubscription, Subscription } from './models/Subscription';
+import { IIncomingMessage, Message } from './models/Message';
+import { IIncomingReadReceipt, ReadReceipt } from './models/ReadReceipt';
+import { SocketConnectionEvents } from './models/SocketConnectionEvents';
+import { ConnectionStatuses } from './models/ConnectionStatuses';
+import { TingEvents } from './models/TingEvents';
+import { TopicAdapter } from './adapters/TopicAdapter';
+import { SubscriptionAdapter } from './adapters/SubscriptionAdapter';
+import { MessageAdapter } from './adapters/MessageAdapter';
+import { ReadReceiptAdapter } from './adapters/ReadReceiptAdapter';
+import { SubscriptionsStore } from './stores/SubscriptionsStore';
 
-export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient, subscriptionsStore:SubscriptionsStore)
+export function onConnect(socket: SocketIOClient.Socket, clientFacade: TingClient, subscriptionsStore: SubscriptionsStore)
 {
     function onError()
     {
@@ -46,11 +46,11 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
         clientFacade.__setConnectionStatus(ConnectionStatuses.ERRORED);
     }
 
-    function onSubscriptionLive(topicData:IIncomingTopic)
+    function onSubscriptionLive(topicData: IIncomingTopic)
     {
-        let topic:Topic = TopicAdapter.fromServerResponse(topicData);
+        let topic: Topic = TopicAdapter.fromServerResponse(topicData);
 
-        let matchedTopic:Topic = subscriptionsStore.getTopicForName(topic.name)
+        let matchedTopic: Topic = subscriptionsStore.getTopicForName(topic.name);
 
         if(!matchedTopic)
         {
@@ -60,22 +60,22 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
         clientFacade.emit('subscription-live', topic);
     }
 
-    function onSubscriptionOff(topicData:IIncomingTopic)
+    function onSubscriptionOff(topicData: IIncomingTopic)
     {
-        let topic:Topic = TopicAdapter.fromServerResponse(topicData);
+        let topic: Topic = TopicAdapter.fromServerResponse(topicData);
 
         subscriptionsStore.removeSubscribedTopicById(topic.topicId);
 
         clientFacade.emit('subscription-off', topic);
     }
 
-    function onMessage(data:IIncomingMessage)
+    function onMessage(data: IIncomingMessage)
     {
-        let topicName:string = data.topic.name;
+        let topicName: string = data.topic.name;
 
-        let message:Message = MessageAdapter.fromServerResponse(data);
+        let message: Message = MessageAdapter.fromServerResponse(data);
 
-        let matchedTopic:Topic = subscriptionsStore.getTopicForName(topicName)
+        let matchedTopic: Topic = subscriptionsStore.getTopicForName(topicName);
 
         if(matchedTopic)
         {
@@ -84,7 +84,7 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
         }
         else
         {
-            let topic:Topic = TopicAdapter.fromServerResponse(data.topic);
+            let topic: Topic = TopicAdapter.fromServerResponse(data.topic);
             message.topic = topic;
             topic.addMessage(message);
             subscriptionsStore.addSubscribedTopic(topic);
@@ -94,18 +94,18 @@ export function onConnect(socket:SocketIOClient.Socket, clientFacade:TingClient,
         clientFacade.emit(`message:${message.topic.name}`, message);
     }
 
-    function onMessageRead(data:{
-        topic:IIncomingTopic,
-        readReceipt:IIncomingReadReceipt
+    function onMessageRead(data: {
+        topic: IIncomingTopic,
+        readReceipt: IIncomingReadReceipt
     })
     {
-        let topicName:string = data.topic.name;
+        let topicName: string = data.topic.name;
 
-        let matchedTopic:Topic = subscriptionsStore.getTopicForName(topicName)
+        let matchedTopic: Topic = subscriptionsStore.getTopicForName(topicName);
 
         if(matchedTopic)
         {
-            let readReceipt:ReadReceipt = ReadReceiptAdapter.fromServerResponse(data.readReceipt);
+            let readReceipt: ReadReceipt = ReadReceiptAdapter.fromServerResponse(data.readReceipt);
             matchedTopic.markAMessageAsRead(readReceipt);
 
             clientFacade.emit('message-read', matchedTopic, readReceipt);

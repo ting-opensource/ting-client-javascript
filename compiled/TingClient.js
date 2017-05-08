@@ -182,6 +182,9 @@ var __extends = (this && this.__extends) || (function () {
         TingClient.prototype.publishMessage = function (topicName, messageBody, messageType) {
             return MessagesService_1.MessagesService.publishMessage(this.session, topicName, messageBody, messageType);
         };
+        TingClient.prototype.publishFile = function (topicName, file) {
+            return MessagesService_1.MessagesService.publishFile(this.session, topicName, file);
+        };
         TingClient.prototype.markAMessageAsRead = function (message) {
             return this._subscriptionsStore.markAMessageAsRead(message);
         };
