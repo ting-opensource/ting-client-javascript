@@ -642,7 +642,6 @@ System.register("services/MessagesService", ["whatwg-fetch", "lodash", "models/M
                     return fetch(url, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
                             'Authorization': "Bearer " + session.token
                         },
                         body: formData

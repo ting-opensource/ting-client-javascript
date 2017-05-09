@@ -10,6 +10,11 @@
 </head>
 
 <body>
+    <form>
+        <input type="file" id="file" />
+        <button type="submit" id="submit">Send File!</button>
+    </form>
+
     <script src="../node_modules/es6-shim/es6-shim.min.js"></script>
     <script src="../node_modules/systemjs/dist/system.js"></script>
     <script>
@@ -26,7 +31,8 @@
                 'moment': 'npm:/moment/min/moment.min.js',
                 'socket.io-client': 'npm:/socket.io-client/dist/socket.io.min.js',
                 'whatwg-fetch': 'npm:/whatwg-fetch/fetch.js',
-                'rxjs': 'npm:/rxjs/bundles/Rx.min.js'
+                'rxjs': 'npm:/rxjs/bundles/Rx.min.js',
+                'jquery': 'npm:/jquery/dist/jquery.min.js'
             },
             packages: {
                 'compiled:' : {

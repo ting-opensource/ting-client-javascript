@@ -495,7 +495,6 @@ define("services/MessagesService", ["require", "exports", "lodash", "models/Mess
             return fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': "Bearer " + session.token
                 },
                 body: formData
