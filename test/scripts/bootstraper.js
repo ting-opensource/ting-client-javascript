@@ -1,11 +1,31 @@
-System.import('compiled:/TingClient')
-.then(function({TingClient})
+Promise.all([
+    System.import('jquery'),
+    System.import('compiled:/TingClient')
+])
+.then(function(args)
 {
-    let client = new TingClient('http://localhost:6007',
+    let $ = args[0];
+    let TingClient = args[1].TingClient;
+
+    let client = new TingClient('http://localhost:6013',
                                 'TEST_SUBSCRIBER',
                                 '__TING_CLIENT_ID_FOR_DEV__',
                                 '__TING_CLIENT_SECRET_FOR_DEV__');
     window.client = client;
+
+
+    let selectedFile = null;
+    $('#file').on('change', (event) =>
+    {
+        selectedFile = $(event.target).get(0).files[0];
+    });
+
+    $('#submit').on('click', (event) =>
+    {
+        event.preventDefault();
+        console.log(selectedFile);
+        client.publishFile('test-topic', selectedFile);
+    });
 
     client.on('subscription-live', function(subscription)
     {

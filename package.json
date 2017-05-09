@@ -1,6 +1,6 @@
 {
   "name": "ting-client-javascript",
-  "version": "0.2.0-alpha.1",
+  "version": "0.2.0-alpha.2",
   "description": "Durable and Realtime Messaging System primarily geared towards Web Apps",
   "main": "compiled/index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "eslint-plugin-node": "^4.2.2",
     "eslint-plugin-promise": "^3.5.0",
     "eslint-plugin-standard": "^3.0.1",
+    "jquery": "^3.2.1",
     "systemjs": "^0.20.12",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"

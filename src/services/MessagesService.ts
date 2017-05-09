@@ -128,7 +128,6 @@ export class MessagesService
         return fetch(url, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${session.token}`
             },
             body: formData
