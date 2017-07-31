@@ -7,7 +7,7 @@ Promise.all([
     let $ = args[0];
     let TingClient = args[1].TingClient;
 
-    let client = new TingClient('http://localhost:6013',
+    let client = new TingClient('http://localhost:6017',
                                 'TEST_SUBSCRIBER',
                                 '__TING_CLIENT_ID_FOR_DEV__',
                                 '__TING_CLIENT_SECRET_FOR_DEV__');

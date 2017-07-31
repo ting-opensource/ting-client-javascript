@@ -129,7 +129,7 @@ var __extends = (this && this.__extends) || (function () {
                 .then(function (session) {
                 var liveConnectionPromise = new Promise(function (resolve, reject) {
                     _this._transport = io(_this._serviceBaseURL, {
-                        path: '/live',
+                        path: _this._serviceBaseURL.endsWith('/') ? 'live' : '/live',
                         query: "token=" + session.token
                     });
                     var onSocketConnect = function () {
@@ -151,7 +151,9 @@ var __extends = (this && this.__extends) || (function () {
             });
         };
         TingClient.prototype.disconnect = function () {
-            this.transport.disconnect();
+            if (this.transport) {
+                this.transport.disconnect();
+            }
             this._manualConnectionPromise = null;
             this._subscriptionsStore.reset();
         };

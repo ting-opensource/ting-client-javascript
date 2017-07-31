@@ -9,7 +9,7 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _ = require("lodash");
+    var lodash_1 = require("lodash");
     var rxjs_1 = require("rxjs");
     var SubscriptionService_1 = require("../services/SubscriptionService");
     var MessagesService_1 = require("../services/MessagesService");
@@ -34,11 +34,11 @@
         };
         SubscriptionsStore.prototype.addSubscribedTopic = function (topic) {
             var subscribedTopicsArray = this.subscribedTopics.getValue();
-            var matchedTopic = _.find(subscribedTopicsArray, function (datum) {
+            var matchedTopic = lodash_1.find(subscribedTopicsArray, function (datum) {
                 return datum.topicId === topic.topicId;
             });
             if (matchedTopic) {
-                _.extend(matchedTopic, _.omit(topic, 'messages'));
+                lodash_1.extend(matchedTopic, lodash_1.omit(topic, 'messages'));
             }
             else {
                 subscribedTopicsArray.push(topic);
@@ -48,11 +48,11 @@
         };
         SubscriptionsStore.prototype.removeSubscribedTopicById = function (topicId) {
             var subscribedTopicsArray = this.subscribedTopics.getValue();
-            var matchedTopic = _.find(subscribedTopicsArray, function (datum) {
+            var matchedTopic = lodash_1.find(subscribedTopicsArray, function (datum) {
                 return datum.topicId === topicId;
             });
             if (matchedTopic) {
-                var matchedTopicIndex = _.indexOf(subscribedTopicsArray, matchedTopic);
+                var matchedTopicIndex = lodash_1.indexOf(subscribedTopicsArray, matchedTopic);
                 subscribedTopicsArray.splice(matchedTopicIndex, 1);
                 matchedTopic.messages.complete();
             }
@@ -61,7 +61,7 @@
         };
         SubscriptionsStore.prototype.getTopicForName = function (topicName) {
             var subscribedTopicsArray = this.subscribedTopics.getValue();
-            var matchedTopic = _.find(subscribedTopicsArray, function (datum) {
+            var matchedTopic = lodash_1.find(subscribedTopicsArray, function (datum) {
                 return datum.name === topicName;
             });
             return matchedTopic || null;
@@ -111,7 +111,7 @@
             });
         };
         SubscriptionsStore.prototype.reset = function () {
-            _.forEach(this.subscribedTopics.getValue(), function (datum) {
+            lodash_1.forEach(this.subscribedTopics.getValue(), function (datum) {
                 datum.reset();
             });
             this.subscribedTopics.next([]);

@@ -10,13 +10,13 @@
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var moment = require("moment");
-    var _ = require("lodash");
+    var lodash_1 = require("lodash");
     var Topic_1 = require("../models/Topic");
     var TopicAdapter = (function () {
         function TopicAdapter() {
         }
         TopicAdapter.fromServerResponse = function (topicData) {
-            var topic = new Topic_1.Topic(_.extend({}, topicData, {
+            var topic = new Topic_1.Topic(lodash_1.extend({}, topicData, {
                 createdAt: topicData.createdAt ? moment.utc(topicData.createdAt) : null,
                 updatedAt: topicData.updatedAt ? moment.utc(topicData.updatedAt) : null
             }));

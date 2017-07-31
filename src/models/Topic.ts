@@ -1,5 +1,5 @@
 import { Moment } from 'moment';
-import * as _ from 'lodash';
+import { chain, unionBy, keyBy, sortBy, keys, forEach, indexOf, extend } from 'lodash';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { Message } from './Message';
@@ -51,7 +51,7 @@ export class Topic
 
         this._unreadCountSubscription = this._messages.subscribe((messages: Array<Message>) =>
         {
-            let unreadMessages = _.chain(messages).filter((datum: Message) =>
+            let unreadMessages = chain(messages).filter((datum: Message) =>
             {
                 return !datum.isRead;
             }).value();
@@ -68,9 +68,9 @@ export class Topic
     mergeMessages(incomingMessages: Array<Message>): BehaviorSubject<Array<Message>>
     {
         let existingMesssages: Array<Message> = this.messages.getValue();
-        let mergedMessages: Array<Message> = _.unionBy(incomingMessages, existingMesssages, 'messageId');
+        let mergedMessages: Array<Message> = unionBy(incomingMessages, existingMesssages, 'messageId');
 
-        mergedMessages = _.sortBy(mergedMessages, (datum: Message) =>
+        mergedMessages = sortBy(mergedMessages, (datum: Message) =>
         {
             return -(datum.updatedAt.valueOf());
         });
@@ -89,18 +89,18 @@ export class Topic
     {
         let existingMesssages: Array<Message> = this.messages.getValue();
 
-        let readReceiptsKeyedByMessageId: any = _.keyBy(readReceipts, (datum: ReadReceipt) =>
+        let readReceiptsKeyedByMessageId: any = keyBy(readReceipts, (datum: ReadReceipt) =>
         {
             return datum.messageId;
         });
 
-        let messageIdsInReadReceipts: Array<string> = _.keys(readReceiptsKeyedByMessageId);
+        let messageIdsInReadReceipts: Array<string> = keys(readReceiptsKeyedByMessageId);
 
-        _.forEach(existingMesssages, (datum: Message) =>
+        forEach(existingMesssages, (datum: Message) =>
         {
-            if(_.indexOf(messageIdsInReadReceipts, datum.messageId) > -1)
+            if(indexOf(messageIdsInReadReceipts, datum.messageId) > -1)
             {
-                _.extend(datum, readReceiptsKeyedByMessageId[datum.messageId]);
+                extend(datum, readReceiptsKeyedByMessageId[datum.messageId]);
             }
         });
 

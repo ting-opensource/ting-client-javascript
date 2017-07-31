@@ -1,5 +1,4 @@
 import 'whatwg-fetch';
-import * as _ from 'lodash';
 
 import { Base64Encoder } from '../utils/Base64Encoder';
 import { Session } from '../models/Session';

@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { find, extend, forEach, indexOf, omit } from 'lodash';
 import { Observable, BehaviorSubject } from 'rxjs';
 
 import { TingClient } from '../TingClient';
@@ -37,14 +37,14 @@ export class SubscriptionsStore
     addSubscribedTopic(topic: Topic): BehaviorSubject<Array<Topic>>
     {
         let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
+        let matchedTopic: Topic = find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.topicId === topic.topicId;
         });
 
         if(matchedTopic)
         {
-            _.extend(matchedTopic, _.omit(topic, 'messages'));
+            extend(matchedTopic, omit(topic, 'messages'));
         }
         else
         {
@@ -58,14 +58,14 @@ export class SubscriptionsStore
     removeSubscribedTopicById(topicId: string): BehaviorSubject<Array<Topic>>
     {
         let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
+        let matchedTopic: Topic = find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.topicId === topicId;
         });
 
         if(matchedTopic)
         {
-            let matchedTopicIndex = _.indexOf(subscribedTopicsArray, matchedTopic);
+            let matchedTopicIndex = indexOf(subscribedTopicsArray, matchedTopic);
             subscribedTopicsArray.splice(matchedTopicIndex, 1);
             matchedTopic.messages.complete();
         }
@@ -77,7 +77,7 @@ export class SubscriptionsStore
     getTopicForName(topicName: string): Topic
     {
         let subscribedTopicsArray: Array<Topic> = this.subscribedTopics.getValue();
-        let matchedTopic: Topic = _.find(subscribedTopicsArray, (datum: Topic) =>
+        let matchedTopic: Topic = find(subscribedTopicsArray, (datum: Topic) =>
         {
             return datum.name === topicName;
         });
@@ -153,7 +153,7 @@ export class SubscriptionsStore
 
     reset(): void
     {
-        _.forEach(this.subscribedTopics.getValue(), (datum: Topic) =>
+        forEach(this.subscribedTopics.getValue(), (datum: Topic) =>
         {
             datum.reset();
         });

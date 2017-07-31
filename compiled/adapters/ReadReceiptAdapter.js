@@ -10,13 +10,13 @@
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var moment = require("moment");
-    var _ = require("lodash");
+    var lodash_1 = require("lodash");
     var ReadReceipt_1 = require("../models/ReadReceipt");
     var ReadReceiptAdapter = (function () {
         function ReadReceiptAdapter() {
         }
         ReadReceiptAdapter.fromServerResponse = function (readReceiptData) {
-            var readReceipt = new ReadReceipt_1.ReadReceipt(_.extend({}, readReceiptData, {
+            var readReceipt = new ReadReceipt_1.ReadReceipt(lodash_1.extend({}, readReceiptData, {
                 readOn: readReceiptData.readOn ? moment.utc(readReceiptData.readOn) : null,
             }));
             return readReceipt;
