@@ -1,6 +1,5 @@
 import 'whatwg-fetch';
 
-import * as _ from 'lodash';
 import * as EventEmitter from 'eventemitter2';
 import * as io from 'socket.io-client';
 import { Observable, BehaviorSubject } from 'rxjs';
@@ -123,7 +122,7 @@ export class TingClient extends EventEmitter.EventEmitter2
                 let liveConnectionPromise = new Promise((resolve, reject) =>
                 {
                     this._transport = io(this._serviceBaseURL, {
-                        path: '/live',
+                        path: this._serviceBaseURL.endsWith('/') ? 'live' : '/live',
                         query: `token=${session.token}`
                     });
 
@@ -157,7 +156,10 @@ export class TingClient extends EventEmitter.EventEmitter2
 
     public disconnect(): void
     {
-        this.transport.disconnect();
+        if(this.transport)
+        {
+            this.transport.disconnect();
+        }
         this._manualConnectionPromise = null;
         this._subscriptionsStore.reset();
     }

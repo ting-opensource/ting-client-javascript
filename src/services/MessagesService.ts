@@ -1,5 +1,5 @@
+import { map } from 'lodash';
 import 'whatwg-fetch';
-import * as _ from 'lodash';
 
 import { Topic } from '../models/Topic';
 import { Session } from '../models/Session';
@@ -38,7 +38,7 @@ export class MessagesService
             })
             .then((response: Array<IIncomingMessage>) =>
             {
-                return _.map(response, (datum: IIncomingMessage) =>
+                return map(response, (datum: IIncomingMessage) =>
                 {
                     return MessageAdapter.fromServerResponse(datum);
                 });
@@ -70,7 +70,7 @@ export class MessagesService
             })
             .then((response: Array<IIncomingMessage>) =>
             {
-                return _.map(response, (datum: IIncomingMessage) =>
+                return map(response, (datum: IIncomingMessage) =>
                 {
                     return MessageAdapter.fromServerResponse(datum);
                 });
@@ -204,7 +204,7 @@ export class MessagesService
             })
             .then((response: Array<IIncomingReadReceipt>) =>
             {
-                return _.map(response, (datum: IIncomingReadReceipt) =>
+                return map(response, (datum: IIncomingReadReceipt) =>
                 {
                     return ReadReceiptAdapter.fromServerResponse(datum);
                 });
@@ -236,7 +236,7 @@ export class MessagesService
             })
             .then((response: Array<IIncomingReadReceipt>) =>
             {
-                return _.map(response, (datum: IIncomingReadReceipt) =>
+                return map(response, (datum: IIncomingReadReceipt) =>
                 {
                     return ReadReceiptAdapter.fromServerResponse(datum);
                 });

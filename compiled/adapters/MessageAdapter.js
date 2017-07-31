@@ -10,7 +10,7 @@
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var moment = require("moment");
-    var _ = require("lodash");
+    var lodash_1 = require("lodash");
     var Message_1 = require("../models/Message");
     var FileMetadata_1 = require("../models/FileMetadata");
     var MessageTypes_1 = require("../models/MessageTypes");
@@ -19,7 +19,7 @@
         function MessageAdapter() {
         }
         MessageAdapter.fileMetadataFromServerResponse = function (fileMetadataData) {
-            return new FileMetadata_1.FileMetadata(_.extend({}, fileMetadataData, {
+            return new FileMetadata_1.FileMetadata(lodash_1.extend({}, fileMetadataData, {
                 createdAt: fileMetadataData.createdAt ? moment.utc(fileMetadataData.createdAt) : null,
                 updatedAt: fileMetadataData.updatedAt ? moment.utc(fileMetadataData.updatedAt) : null,
             }));
@@ -43,7 +43,7 @@
                 messageBody = messageData.body;
                 type = MessageTypes_1.MessageTypes.TEXT;
             }
-            var message = new Message_1.Message(_.extend({}, messageData, {
+            var message = new Message_1.Message(lodash_1.extend({}, messageData, {
                 type: type,
                 body: messageBody,
                 topic: TopicAdapter_1.TopicAdapter.fromServerResponse(messageData.topic),

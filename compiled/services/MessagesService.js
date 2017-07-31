@@ -4,13 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "whatwg-fetch", "lodash", "../models/MessageTypes", "../adapters/MessageAdapter", "../adapters/ReadReceiptAdapter"], factory);
+        define(["require", "exports", "lodash", "whatwg-fetch", "../models/MessageTypes", "../adapters/MessageAdapter", "../adapters/ReadReceiptAdapter"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    var lodash_1 = require("lodash");
     require("whatwg-fetch");
-    var _ = require("lodash");
     var MessageTypes_1 = require("../models/MessageTypes");
     var MessageAdapter_1 = require("../adapters/MessageAdapter");
     var ReadReceiptAdapter_1 = require("../adapters/ReadReceiptAdapter");
@@ -37,7 +37,7 @@
                 }
             })
                 .then(function (response) {
-                return _.map(response, function (datum) {
+                return lodash_1.map(response, function (datum) {
                     return MessageAdapter_1.MessageAdapter.fromServerResponse(datum);
                 });
             });
@@ -61,7 +61,7 @@
                 }
             })
                 .then(function (response) {
-                return _.map(response, function (datum) {
+                return lodash_1.map(response, function (datum) {
                     return MessageAdapter_1.MessageAdapter.fromServerResponse(datum);
                 });
             });
@@ -166,7 +166,7 @@
                 }
             })
                 .then(function (response) {
-                return _.map(response, function (datum) {
+                return lodash_1.map(response, function (datum) {
                     return ReadReceiptAdapter_1.ReadReceiptAdapter.fromServerResponse(datum);
                 });
             });
@@ -190,7 +190,7 @@
                 }
             })
                 .then(function (response) {
-                return _.map(response, function (datum) {
+                return lodash_1.map(response, function (datum) {
                     return ReadReceiptAdapter_1.ReadReceiptAdapter.fromServerResponse(datum);
                 });
             });

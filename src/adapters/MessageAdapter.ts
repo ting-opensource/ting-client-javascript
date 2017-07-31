@@ -1,5 +1,5 @@
 import * as moment from 'moment';
-import * as _ from 'lodash';
+import { extend } from 'lodash';
 
 import { IIncomingMessage, Message } from '../models/Message';
 import { IFileMetadata, FileMetadata } from '../models/FileMetadata';
@@ -10,7 +10,7 @@ export class MessageAdapter
 {
     static fileMetadataFromServerResponse(fileMetadataData: IFileMetadata): FileMetadata
     {
-        return new FileMetadata(_.extend({}, fileMetadataData, {
+        return new FileMetadata(extend({}, fileMetadataData, {
             createdAt: fileMetadataData.createdAt ? moment.utc(fileMetadataData.createdAt) : null,
             updatedAt: fileMetadataData.updatedAt ? moment.utc(fileMetadataData.updatedAt) : null,
         }));
@@ -43,7 +43,7 @@ export class MessageAdapter
             type = MessageTypes.TEXT;
         }
 
-        let message: Message = new Message(<IIncomingMessage>_.extend({}, messageData, {
+        let message: Message = new Message(<IIncomingMessage>extend({}, messageData, {
             type: type,
             body: messageBody,
             topic: TopicAdapter.fromServerResponse(messageData.topic),

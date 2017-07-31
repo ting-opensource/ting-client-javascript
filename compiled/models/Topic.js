@@ -9,7 +9,7 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var _ = require("lodash");
+    var lodash_1 = require("lodash");
     var rxjs_1 = require("rxjs");
     var BUFFER_SIZE = 999;
     var Topic = (function () {
@@ -29,7 +29,7 @@
                 this[key] = data[key];
             }
             this._unreadCountSubscription = this._messages.subscribe(function (messages) {
-                var unreadMessages = _.chain(messages).filter(function (datum) {
+                var unreadMessages = lodash_1.chain(messages).filter(function (datum) {
                     return !datum.isRead;
                 }).value();
                 _this.unreadMessagesCount.next(unreadMessages.length);
@@ -54,8 +54,8 @@
         };
         Topic.prototype.mergeMessages = function (incomingMessages) {
             var existingMesssages = this.messages.getValue();
-            var mergedMessages = _.unionBy(incomingMessages, existingMesssages, 'messageId');
-            mergedMessages = _.sortBy(mergedMessages, function (datum) {
+            var mergedMessages = lodash_1.unionBy(incomingMessages, existingMesssages, 'messageId');
+            mergedMessages = lodash_1.sortBy(mergedMessages, function (datum) {
                 return -(datum.updatedAt.valueOf());
             });
             this.messages.next(mergedMessages);
@@ -66,13 +66,13 @@
         };
         Topic.prototype.markMessagesAsRead = function (readReceipts) {
             var existingMesssages = this.messages.getValue();
-            var readReceiptsKeyedByMessageId = _.keyBy(readReceipts, function (datum) {
+            var readReceiptsKeyedByMessageId = lodash_1.keyBy(readReceipts, function (datum) {
                 return datum.messageId;
             });
-            var messageIdsInReadReceipts = _.keys(readReceiptsKeyedByMessageId);
-            _.forEach(existingMesssages, function (datum) {
-                if (_.indexOf(messageIdsInReadReceipts, datum.messageId) > -1) {
-                    _.extend(datum, readReceiptsKeyedByMessageId[datum.messageId]);
+            var messageIdsInReadReceipts = lodash_1.keys(readReceiptsKeyedByMessageId);
+            lodash_1.forEach(existingMesssages, function (datum) {
+                if (lodash_1.indexOf(messageIdsInReadReceipts, datum.messageId) > -1) {
+                    lodash_1.extend(datum, readReceiptsKeyedByMessageId[datum.messageId]);
                 }
             });
             this.messages.next(existingMesssages);
