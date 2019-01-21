@@ -129,7 +129,7 @@ var __extends = (this && this.__extends) || (function () {
                 .then(function (session) {
                 var liveConnectionPromise = new Promise(function (resolve, reject) {
                     _this._transport = io(_this._serviceBaseURL, {
-                        path: _this._serviceBaseURL.endsWith('/') ? 'live' : '/live',
+                        path: _this._serviceBaseURL.endsWith('/') ? 'ting/live' : '/ting/live',
                         query: "token=" + session.token
                     });
                     var onSocketConnect = function () {
